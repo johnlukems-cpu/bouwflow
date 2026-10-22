@@ -1,26 +1,47 @@
 @import "tailwindcss";
 
+/*
+ * BouwFlow huisstijl — afgeleid van het logo:
+ * donkerblauw (navy), helder blauw, oranje accent.
+ */
+@theme {
+  --color-navy-950: #061528;
+  --color-navy-900: #0a2240;
+  --color-navy-800: #0f2f57;
+  --color-navy-700: #163d6e;
+  --color-navy-600: #1f4f8a;
+  --color-brand-50: #eef5ff;
+  --color-brand-100: #d9e8ff;
+  --color-brand-200: #b6d2fe;
+  --color-brand-500: #1a6fd6;
+  --color-brand-600: #0d5bbd;
+  --color-brand-700: #0b4a9a;
+  --color-accent-50: #fff6eb;
+  --color-accent-100: #ffe8c7;
+  --color-accent-400: #fbab3a;
+  --color-accent-500: #f28c13;
+  --color-accent-600: #dd6f05;
+  --color-accent-700: #b75208;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+/* Zichtbare focus voor toetsenbordgebruikers */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }
