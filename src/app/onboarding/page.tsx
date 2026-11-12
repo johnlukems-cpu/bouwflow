@@ -24,7 +24,7 @@ export default async function OnboardingPage() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-slate-50 px-4 py-10">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-        <Image src="/brand/bouwflow-icon.png" alt="" width={56} height={56} className="mx-auto mb-4" />
+        <Image src="/brand/bouwflow-logo-light.png" alt="BouwFlow" width={1161} height={998} className="mx-auto mb-4 h-auto w-32" />
         <h1 className="text-center text-xl font-semibold text-navy-900">Welkom bij BouwFlow</h1>
         <p className="mb-6 mt-1 text-center text-sm text-slate-500">
           Maak de organisatie aan voor uw bedrijf. U wordt automatisch eigenaar en kunt later collega&apos;s toevoegen.

@@ -55,7 +55,7 @@ export function Sidebar({ orgName }: { orgName: string }) {
       <SidebarNav />
       <div className="border-t border-white/10 px-5 py-3 text-xs text-white/50">
         <p className="truncate" title={orgName}>{orgName}</p>
-        <p className="mt-0.5 text-white/30">Projecten in vertrouwen</p>
+        <p className="mt-0.5 text-white/30">Projecten in vertrouwen.</p>
       </div>
     </aside>
   );

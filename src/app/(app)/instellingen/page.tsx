@@ -62,7 +62,7 @@ export default async function SettingsPage() {
                       <form action={updateTaxRate} className="flex shrink-0 gap-1">
                         <input type="hidden" name="id" value={t.id} />
                         {!t.is_default && !t.is_archived && (
-                          <button name="op" value="default" className="rounded px-2 py-1 text-xs font-medium text-brand-600 hover:bg-brand-50">Standaard</button>
+                          <button name="op" value="default" className="rounded px-2 py-1 text-xs font-medium text-brand-700 hover:bg-brand-50">Standaard</button>
                         )}
                         <button name="op" value={t.is_archived ? "restore" : "archive"} className="rounded px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100">
                           {t.is_archived ? "Herstellen" : "Archiveren"}

@@ -83,7 +83,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
                 {
                   label: "E-mailadres",
                   value: customer.email && (
-                    <a href={`mailto:${customer.email}`} className="inline-flex items-center gap-1 text-brand-600 hover:underline">
+                    <a href={`mailto:${customer.email}`} className="inline-flex items-center gap-1 text-brand-700 hover:underline">
                       <Mail className="size-3.5" aria-hidden />
                       {customer.email}
                     </a>
@@ -92,7 +92,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
                 {
                   label: "Telefoonnummer",
                   value: customer.phone && (
-                    <a href={`tel:${customer.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1 text-brand-600 hover:underline">
+                    <a href={`tel:${customer.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1 text-brand-700 hover:underline">
                       <Phone className="size-3.5" aria-hidden />
                       {customer.phone}
                     </a>

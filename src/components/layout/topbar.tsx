@@ -3,6 +3,7 @@ import { signOut, switchOrganization } from "@/app/(auth)/actions";
 import { ROLE_LABELS } from "@/lib/auth/permissions";
 import type { AppContext } from "@/lib/auth/context";
 import { DemoBadge } from "@/components/ui/badge";
+import { BrandIcon } from "./brand";
 import { MobileNav } from "./mobile-nav";
 
 export function Topbar({ ctx }: { ctx: AppContext }) {
@@ -16,6 +17,9 @@ export function Topbar({ ctx }: { ctx: AppContext }) {
   return (
     <header className="no-print sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6">
       <MobileNav />
+      <span className="lg:hidden">
+        <BrandIcon className="size-8" />
+      </span>
       <div className="flex min-w-0 flex-1 items-center gap-2">
         {ctx.memberships.length > 1 ? (
           <form action={switchOrganization} className="min-w-0">
@@ -32,7 +36,7 @@ export function Topbar({ ctx }: { ctx: AppContext }) {
                 </option>
               ))}
             </select>
-            <button type="submit" className="ml-2 text-sm font-medium text-brand-600 hover:text-brand-700">Wissel</button>
+            <button type="submit" className="ml-2 text-sm font-medium text-brand-700 hover:underline">Wissel</button>
           </form>
         ) : (
           <p className="truncate text-sm font-semibold text-slate-800">{ctx.membership.organization.name}</p>

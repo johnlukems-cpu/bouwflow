@@ -74,7 +74,7 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/project
         {f.customerId && (
           <div className="flex items-center gap-2 border-b border-slate-100 px-4 py-2 text-sm text-slate-600">
             Gefilterd op klant.
-            <Link href="/projecten" className="font-medium text-brand-600 hover:underline">Filter verwijderen</Link>
+            <Link href="/projecten" className="font-medium text-brand-700 hover:underline">Filter verwijderen</Link>
           </div>
         )}
 
@@ -126,7 +126,7 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/project
                     <tr key={p.id} className="hover:bg-slate-50">
                       <Td className="whitespace-nowrap font-mono text-xs text-slate-500">{p.project_number}</Td>
                       <Td>
-                        <Link href={`/projecten/${p.id}`} className="font-medium text-slate-900 hover:text-brand-600">
+                        <Link href={`/projecten/${p.id}`} className="font-medium text-slate-900 hover:text-brand-700">
                           {p.name}
                         </Link>
                         {p.is_archived && <Badge className="ml-2">Gearchiveerd</Badge>}

@@ -5,23 +5,26 @@
  * donkerblauw (navy), helder blauw, oranje accent.
  */
 @theme {
-  --color-navy-950: #061528;
-  --color-navy-900: #0a2240;
-  --color-navy-800: #0f2f57;
-  --color-navy-700: #163d6e;
-  --color-navy-600: #1f4f8a;
-  --color-brand-50: #eef5ff;
-  --color-brand-100: #d9e8ff;
-  --color-brand-200: #b6d2fe;
-  --color-brand-500: #1a6fd6;
-  --color-brand-600: #0d5bbd;
-  --color-brand-700: #0b4a9a;
-  --color-accent-50: #fff6eb;
-  --color-accent-100: #ffe8c7;
-  --color-accent-400: #fbab3a;
-  --color-accent-500: #f28c13;
-  --color-accent-600: #dd6f05;
-  --color-accent-700: #b75208;
+  /* Officiële merkkleuren */
+  --color-navy-950: #0b2039;
+  --color-navy-900: #102d50; /* donkerblauw — navigatie, koppen */
+  --color-navy-800: #173b66;
+  --color-navy-700: #1f4a7c;
+  --color-navy-600: #2a5c94;
+  --color-brand-50: #e9f5fc;
+  --color-brand-100: #cfe9f8;
+  --color-brand-200: #a5d4f1;
+  --color-brand-500: #087dc5; /* blauw — secundaire acties, info */
+  --color-brand-600: #0670b1;
+  --color-brand-700: #05669f; /* blauw voor tekst op wit (contrast ≥ 4.5:1) */
+  --color-accent-50: #fff5e6;
+  --color-accent-100: #ffe5bf;
+  --color-accent-400: #ffa733;
+  --color-accent-500: #f28a00; /* oranje — primaire acties */
+  --color-accent-600: #d97b00;
+  --color-accent-700: #9e5900; /* oranje voor tekst op wit (contrast ≥ 4.5:1) */
+  --color-canvas: #f4f6f8; /* lichtgrijs */
+  --color-ink: #333b45; /* donkergrijs */
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -31,7 +34,7 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-canvas text-ink antialiased;
 }
 
 /* Zichtbare focus voor toetsenbordgebruikers */

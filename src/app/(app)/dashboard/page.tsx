@@ -72,7 +72,7 @@ export default async function DashboardPage() {
           <CardHeader
             title="Projecten per status"
             actions={
-              <Link href="/projecten" className="text-sm font-medium text-brand-600 hover:text-brand-700">
+              <Link href="/projecten" className="text-sm font-medium text-brand-700 hover:underline">
                 Alle projecten →
               </Link>
             }

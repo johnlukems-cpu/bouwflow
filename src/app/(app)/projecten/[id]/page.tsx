@@ -136,7 +136,7 @@ function Overview({ project, canWrite, currency, locale }: { project: Project; c
                 {
                   label: "Klant",
                   value: project.customer ? (
-                    <Link href={`/klanten/${project.customer.id}`} className="text-brand-600 hover:underline">
+                    <Link href={`/klanten/${project.customer.id}`} className="text-brand-700 hover:underline">
                       {project.customer.name}
                     </Link>
                   ) : null,

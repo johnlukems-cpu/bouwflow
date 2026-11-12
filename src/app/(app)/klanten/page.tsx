@@ -111,7 +111,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/klante
                     <tr key={c.id} className="hover:bg-slate-50">
                       <Td className="whitespace-nowrap font-mono text-xs text-slate-500">{c.customer_number}</Td>
                       <Td>
-                        <Link href={`/klanten/${c.id}`} className="font-medium text-slate-900 hover:text-brand-600">
+                        <Link href={`/klanten/${c.id}`} className="font-medium text-slate-900 hover:text-brand-700">
                           {c.name}
                         </Link>
                         {c.is_archived && <Badge className="ml-2">Gearchiveerd</Badge>}

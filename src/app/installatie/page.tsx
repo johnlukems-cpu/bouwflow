@@ -12,7 +12,7 @@ export default async function InstallPage() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-        <Image src="/brand/bouwflow-icon.png" alt="" width={56} height={56} className="mb-4" />
+        <Image src="/brand/bouwflow-logo-light.png" alt="BouwFlow" width={1161} height={998} className="mb-4 h-auto w-28" />
         <h1 className="text-xl font-semibold text-navy-900">BouwFlow is nog niet gekoppeld</h1>
         <p className="mt-2 text-sm text-slate-600">
           Stel de omgevingsvariabelen <code className="rounded bg-slate-100 px-1">NEXT_PUBLIC_SUPABASE_URL</code> en{" "}

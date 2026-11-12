@@ -26,7 +26,7 @@ export function SignUpForm({ disabled }: { disabled?: boolean }) {
       </SubmitButton>
       <p className="text-center text-sm text-slate-600">
         Heeft u al een account?{" "}
-        <Link href="/login" className="font-medium text-brand-600 hover:text-brand-700">
+        <Link href="/login" className="font-medium text-brand-700 hover:underline">
           Inloggen
         </Link>
       </p>

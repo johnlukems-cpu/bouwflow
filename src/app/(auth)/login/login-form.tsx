@@ -23,7 +23,7 @@ export function LoginForm({ next, disabled }: { next?: string; disabled?: boolea
       </SubmitButton>
       <p className="text-center text-sm text-slate-600">
         Nog geen account?{" "}
-        <Link href="/registreren" className="font-medium text-brand-600 hover:text-brand-700">
+        <Link href="/registreren" className="font-medium text-brand-700 hover:underline">
           Registreer uw bedrijf
         </Link>
       </p>
