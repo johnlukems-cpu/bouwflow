@@ -10,6 +10,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // react-pdf draait alleen op de server (Node.js)
+  serverExternalPackages: ["@react-pdf/renderer"],
+  // Het logo wordt door de PDF-routes van schijf gelezen
+  outputFileTracingIncludes: { "/pdf/**": ["./public/brand/bouwflow-compact-light.png"] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

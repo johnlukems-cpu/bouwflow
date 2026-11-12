@@ -134,6 +134,9 @@ export async function PostCalcTab({ ctx, project }: Props) {
   const canCost = can(ctx.membership.role, "costs.write");
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <LinkButton href={`/pdf/nacalculatie/${project.id}`} variant="secondary" target="_blank" prefetch={false}>Na-calculatie als PDF</LinkButton>
+      </div>
       {fin && <PostCalcTable financials={fin} basis={ctx.settings.revenue_basis} warningPercent={ctx.settings.budget_warning_percent} locale={ctx.settings.locale} />}
       <div className="grid gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2">
