@@ -119,3 +119,13 @@ export const DEMO_ACTIVITY: Activity[] = [
   { id: "a4", entity_type: "project", entity_id: DEMO_PROJECTS[3].id, action: "updated", summary: "Project P-2026-0004 Dakvervanging lokalen gewijzigd", created_at: "2026-10-15T08:45:00.000Z" },
   { id: "a5", entity_type: "customer", entity_id: DEMO_CUSTOMERS[6].id, action: "archived", summary: "Klant K-00007 Familie Amatredjo gearchiveerd", created_at: "2026-10-02T16:30:00.000Z" },
 ];
+
+export const DEMO_SUBSCRIPTION = {
+  planCode: "professional",
+  planName: "Professional (demo)",
+  status: "active" as const,
+  trialEndsAt: null,
+  modules: ["leveranciers", "medewerkers", "planning", "materialen", "voorraad", "calculatie", "inkoop", "werkbonnen", "uren", "offertes", "facturatie", "betalingen", "nacalculatie", "rapportages", "documenten", "klantportaal"],
+  maxUsers: 15,
+  writable: true,
+};

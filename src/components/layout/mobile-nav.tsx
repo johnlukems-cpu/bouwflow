@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 import { BrandMark } from "./brand";
 import { SidebarNav } from "./sidebar";
 
-export function MobileNav() {
+export function MobileNav({ modules, isPlatformAdmin }: { modules: string[]; isPlatformAdmin?: boolean }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export function MobileNav() {
                 <X className="size-5" />
               </button>
             </div>
-            <SidebarNav onNavigate={() => setOpen(false)} />
+            <SidebarNav onNavigate={() => setOpen(false)} modules={modules} isPlatformAdmin={isPlatformAdmin} />
           </div>
         </div>,
           document.body,

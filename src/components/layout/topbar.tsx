@@ -1,7 +1,7 @@
 import { LogOut } from "lucide-react";
 import { signOut, switchOrganization } from "@/app/(auth)/actions";
 import { ROLE_LABELS } from "@/lib/auth/permissions";
-import type { AppContext } from "@/lib/auth/context";
+import { enabledModules, type AppContext } from "@/lib/auth/context";
 import { DemoBadge } from "@/components/ui/badge";
 import { BrandIcon } from "./brand";
 import { MobileNav } from "./mobile-nav";
@@ -16,7 +16,7 @@ export function Topbar({ ctx }: { ctx: AppContext }) {
 
   return (
     <header className="no-print sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6">
-      <MobileNav />
+      <MobileNav modules={enabledModules(ctx)} isPlatformAdmin={ctx.isPlatformAdmin} />
       <span className="lg:hidden">
         <BrandIcon className="size-8" />
       </span>

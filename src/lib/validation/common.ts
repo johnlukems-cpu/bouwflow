@@ -91,3 +91,72 @@ export function formDataToObject(formData: FormData): Record<string, string> {
   });
   return obj;
 }
+
+/**
+ * Generiek decimaal veld (hoeveelheden, prijzen, percentages) met Nederlandse
+ * invoernotatie. Retourneert een genormaliseerde string (bijv. "12.500").
+ */
+export function decimalValue(
+  label: string,
+  opts: { decimals: number; min?: string; max?: string; allowNegative?: boolean; nonZero?: boolean; optional?: boolean; defaultValue?: string },
+) {
+  return z.preprocess(
+    (v) => {
+      if (v === undefined || v === null || (typeof v === "string" && v.trim() === "")) return opts.defaultValue ?? (opts.optional ? null : "");
+      return String(v);
+    },
+    z
+      .string({ error: `${label} is verplicht` })
+      .nullable()
+      .transform((raw, ctx) => {
+        if (raw === null) return null;
+        if (raw === "") {
+          ctx.addIssue({ code: "custom", message: `${label} is verplicht` });
+          return z.NEVER;
+        }
+        const d = parseAmountInput(raw);
+        if (!d) {
+          ctx.addIssue({ code: "custom", message: `${label} is geen geldig getal` });
+          return z.NEVER;
+        }
+        if (!opts.allowNegative && d.isNegative()) {
+          ctx.addIssue({ code: "custom", message: `${label} mag niet negatief zijn` });
+          return z.NEVER;
+        }
+        if (opts.nonZero && d.isZero()) {
+          ctx.addIssue({ code: "custom", message: `${label} mag niet 0 zijn` });
+          return z.NEVER;
+        }
+        if (d.decimalPlaces() > opts.decimals) {
+          ctx.addIssue({ code: "custom", message: `${label} mag maximaal ${opts.decimals} decimalen hebben` });
+          return z.NEVER;
+        }
+        if (opts.min !== undefined && d.lessThan(opts.min)) {
+          ctx.addIssue({ code: "custom", message: `${label} moet minimaal ${opts.min.replace(".", ",")} zijn` });
+          return z.NEVER;
+        }
+        if (opts.max !== undefined && d.greaterThan(opts.max)) {
+          ctx.addIssue({ code: "custom", message: `${label} mag maximaal ${opts.max.replace(".", ",")} zijn` });
+          return z.NEVER;
+        }
+        return d.toFixed(opts.decimals);
+      }),
+  );
+}
+
+export const checkbox = z.preprocess((v) => v === "on" || v === "true" || v === true, z.boolean());
+
+export const optionalTime = (label: string) =>
+  z.preprocess(
+    (v) => (v === "" || v === undefined ? null : v),
+    z.string().regex(/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/, `${label} is geen geldige tijd`).nullable(),
+  );
+
+export const requiredDate = (label: string) =>
+  z.preprocess((v) => (v === "" ? undefined : v), z.iso.date(`${label} is geen geldige datum`));
+
+export const intInRange = (label: string, min: number, max: number, def?: number) =>
+  z.preprocess(
+    (v) => (v === "" || v === undefined || v === null ? def : v),
+    z.coerce.number({ error: `${label} moet een getal zijn` }).int(`${label} moet een geheel getal zijn`).min(min, `${label} moet minimaal ${min} zijn`).max(max, `${label} mag maximaal ${max} zijn`),
+  );

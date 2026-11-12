@@ -4,7 +4,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAppMode, type AppMode } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { DEMO_MEMBERSHIP, DEMO_SETTINGS, DEMO_USER } from "@/lib/demo/data";
+import { DEMO_MEMBERSHIP, DEMO_SETTINGS, DEMO_SUBSCRIPTION, DEMO_USER } from "@/lib/demo/data";
+import { DEMO_EMPLOYEE_ID } from "@/lib/demo/business";
+import { ALWAYS_AVAILABLE_MODULES, type ModuleKey } from "@/lib/modules";
 import { can, isRole, type Permission } from "./permissions";
 import type { Membership, OrganizationSettings } from "@/lib/types";
 
@@ -17,6 +19,30 @@ export interface AppContext {
   /** Actieve organisatie + rol, door de server gevalideerd. */
   membership: Membership;
   settings: OrganizationSettings;
+  subscription: SubscriptionInfo;
+  /** Gekoppelde medewerker van de ingelogde gebruiker (voor eigen uren/werkbonnen). */
+  employeeId: string | null;
+  isPlatformAdmin: boolean;
+}
+
+export interface SubscriptionInfo {
+  planCode: string;
+  planName: string;
+  status: "trialing" | "active" | "past_due" | "suspended" | "cancelled";
+  trialEndsAt: string | null;
+  modules: string[];
+  maxUsers: number | null;
+  /** Mag de organisatie gegevens wijzigen (actief abonnement of lopende proef)? */
+  writable: boolean;
+}
+
+export function hasModule(ctx: AppContext, module: ModuleKey): boolean {
+  return ALWAYS_AVAILABLE_MODULES.includes(module) || ctx.subscription.modules.includes(module);
+}
+
+/** Lijst van modules die voor deze organisatie beschikbaar zijn. */
+export function enabledModules(ctx: AppContext): string[] {
+  return [...ALWAYS_AVAILABLE_MODULES, ...ctx.subscription.modules];
 }
 
 export class PermissionError extends Error {}
@@ -33,7 +59,16 @@ export const getAppContext = cache(async (): Promise<AppContext> => {
   const mode = getAppMode();
   if (mode === "unconfigured") redirect("/installatie");
   if (mode === "demo") {
-    return { mode, user: DEMO_USER, memberships: [DEMO_MEMBERSHIP], membership: DEMO_MEMBERSHIP, settings: DEMO_SETTINGS };
+    return {
+      mode,
+      user: DEMO_USER,
+      memberships: [DEMO_MEMBERSHIP],
+      membership: DEMO_MEMBERSHIP,
+      settings: DEMO_SETTINGS,
+      subscription: DEMO_SUBSCRIPTION,
+      employeeId: DEMO_EMPLOYEE_ID,
+      isPlatformAdmin: false,
+    };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -64,7 +99,30 @@ export const getAppContext = cache(async (): Promise<AppContext> => {
     .single();
   if (settingsError || !settings) throw new Error("Organisatie-instellingen ontbreken");
 
-  const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", auth.user.id).maybeSingle();
+  const orgId = membership.organization.id;
+  const [{ data: profile }, { data: sub }, { data: employee }, { data: platformAdmin }] = await Promise.all([
+    supabase.from("profiles").select("full_name").eq("id", auth.user.id).maybeSingle(),
+    supabase
+      .from("organization_subscriptions")
+      .select("plan_code, status, trial_ends_at, max_users_override, plan:subscription_plans(name, modules, max_users)")
+      .eq("organization_id", orgId)
+      .maybeSingle(),
+    supabase.from("employees").select("id").eq("organization_id", orgId).eq("member_id", membership.id).eq("is_active", true).maybeSingle(),
+    supabase.rpc("is_platform_admin"),
+  ]);
+  const plan = (Array.isArray(sub?.plan) ? sub?.plan[0] : sub?.plan) as { name: string; modules: string[]; max_users: number | null } | null | undefined;
+  const status = (sub?.status ?? "suspended") as SubscriptionInfo["status"];
+  const trialEndsAt = (sub?.trial_ends_at as string | null) ?? null;
+  const subscription: SubscriptionInfo = {
+    planCode: (sub?.plan_code as string) ?? "onbekend",
+    planName: plan?.name ?? "Geen abonnement",
+    status,
+    trialEndsAt,
+    modules: plan?.modules ?? [],
+    maxUsers: (sub?.max_users_override as number | null) ?? plan?.max_users ?? null,
+    // Spiegelt public.org_is_writable() in de database (die blijft leidend).
+    writable: status === "active" || status === "past_due" || (status === "trialing" && (!trialEndsAt || new Date(trialEndsAt) > new Date())),
+  };
 
   return {
     mode,
@@ -72,6 +130,9 @@ export const getAppContext = cache(async (): Promise<AppContext> => {
     memberships,
     membership,
     settings: settings as OrganizationSettings,
+    subscription,
+    employeeId: (employee?.id as string | undefined) ?? null,
+    isPlatformAdmin: platformAdmin === true,
   };
 });
 
