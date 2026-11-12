@@ -4,11 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FormAlert } from "@/components/ui/field";
-import { FutureFeature } from "@/components/ui/future-feature";
+import { LinkButton } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { getAppContext } from "@/lib/auth/context";
-import { can, ROLE_LABELS } from "@/lib/auth/permissions";
-import { listMembers } from "@/lib/data/projects";
+import { can } from "@/lib/auth/permissions";
 import { listTaxRates } from "@/lib/data/settings";
 import { updateTaxRate } from "./actions";
 import { SettingsForm } from "./settings-form";
@@ -18,13 +17,22 @@ export const metadata: Metadata = { title: "Instellingen" };
 
 export default async function SettingsPage() {
   const ctx = await getAppContext();
-  const [taxRates, members] = await Promise.all([listTaxRates(ctx), listMembers(ctx)]);
+  const taxRates = await listTaxRates(ctx);
   const canSettings = can(ctx.membership.role, "settings.write") && ctx.mode !== "demo";
   const canTax = can(ctx.membership.role, "tax_rates.write") && ctx.mode !== "demo";
 
   return (
     <>
-      <PageHeader title="Instellingen" description="Bedrijfsgegevens, valuta, belastingtarieven en nummering van uw organisatie." />
+      <PageHeader
+        title="Instellingen"
+        description="Bedrijfsgegevens, valuta, belastingtarieven en nummering van uw organisatie."
+        actions={
+          <>
+            <LinkButton href="/instellingen/gebruikers" variant="secondary">Gebruikers en rechten</LinkButton>
+            <LinkButton href="/instellingen/abonnement" variant="secondary">Abonnement</LinkButton>
+          </>
+        }
+      />
       {ctx.mode === "demo" && (
         <div className="mb-6">
           <FormAlert tone="info" message="Demo-modus: instellingen zijn alleen-lezen." />
@@ -80,24 +88,6 @@ export default async function SettingsPage() {
             )}
           </Card>
 
-          <Card>
-            <CardHeader title="Gebruikers en rollen" />
-            <ul className="divide-y divide-slate-100">
-              {members.map((m) => (
-                <li key={m.id} className="flex items-center justify-between px-5 py-3 text-sm">
-                  <span className="text-slate-900">{m.name}</span>
-                  <Badge>{ROLE_LABELS[m.role]}</Badge>
-                </li>
-              ))}
-            </ul>
-            <CardBody className="border-t border-slate-100">
-              <FutureFeature title="Collega's uitnodigen en rollen wijzigen" compact>
-                Uitnodigen per e-mail en rollen beheren volgt in de module Medewerkers.
-              </FutureFeature>
-            </CardBody>
-          </Card>
-
-          <FutureFeature title="Abonnement en facturering">Beheer van het BouwFlow-abonnement per organisatie.</FutureFeature>
         </div>
       </div>
     </>

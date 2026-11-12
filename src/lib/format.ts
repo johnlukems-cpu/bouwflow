@@ -1,4 +1,6 @@
-export function formatDate(value: string | null | undefined, locale = "nl-SR"): string {
+/** Datum als DD-MM-JJJJ. (locale blijft voor compatibiliteit; de notatie is altijd DD-MM-JJJJ.) */
+export function formatDate(value: string | null | undefined, _locale?: string): string {
+  void _locale;
   if (!value) return "—";
   // Datums (YYYY-MM-DD) zonder tijdzoneverschuiving tonen
   const d = /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00Z`) : new Date(value);

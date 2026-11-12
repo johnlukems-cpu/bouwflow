@@ -8,14 +8,16 @@ import { Card, CardBody, CardHeader, DescriptionList } from "@/components/ui/car
 import { ConfirmAction } from "@/components/ui/confirm-action";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { getAppContext } from "@/lib/auth/context";
+import { getAppContext, hasModule } from "@/lib/auth/context";
+import { load } from "@/lib/data/query";
 import { can } from "@/lib/auth/permissions";
 import { getCustomer } from "@/lib/data/customers";
 import { listProjects, parseProjectFilters } from "@/lib/data/projects";
 import { formatMoney } from "@/lib/finance/money";
 import { formatDate } from "@/lib/format";
 import { CUSTOMER_TYPE_LABELS } from "@/lib/types";
-import { setCustomerArchived } from "../actions";
+import { revokePortalLink, setCustomerArchived } from "../actions";
+import { CreatePortalLink } from "../portal-card";
 
 export const metadata: Metadata = { title: "Klant" };
 
@@ -26,6 +28,9 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
   if (!customer) notFound();
   const projects = await listProjects(ctx, { ...parseProjectFilters({}), customerId: customer.id, archive: "all" });
   const canWrite = can(ctx.membership.role, "customers.write");
+  const portalLinks = await load<{ id: string; created_at: string; expires_at: string; revoked_at: string | null; last_used_at: string | null }[]>(ctx, "Portaallinks", () => [], (sb, org) =>
+    sb.from("customer_portal_links").select("id, created_at, expires_at, revoked_at, last_used_at").eq("organization_id", org).eq("customer_id", customer.id).order("created_at", { ascending: false }).limit(10) as unknown as PromiseLike<{ data: { id: string; created_at: string; expires_at: string; revoked_at: string | null; last_used_at: string | null }[] | null; error: { message: string } | null }>,
+  );
   const { currency_code: cur, locale } = ctx.settings;
   const address = [customer.address_line, [customer.postal_code, customer.city].filter(Boolean).join(" "), customer.country_code].filter(Boolean).join(", ");
 
@@ -120,6 +125,34 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
           </CardBody>
         </Card>
       </div>
+
+      {hasModule(ctx, "klantportaal") && can(ctx.membership.role, "portal.manage") && (
+        <Card className="mt-6">
+          <CardHeader title="Klantportaal" description="De klant bekijkt via een persoonlijke link zijn projecten, definitieve offertes (en kan die accepteren) en facturen — zonder account." />
+          <CardBody className="space-y-4">
+            {portalLinks.length > 0 && (
+              <ul className="divide-y divide-slate-100 rounded-lg ring-1 ring-slate-200">
+                {portalLinks.map((l) => (
+                  <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 text-sm">
+                    <span>
+                      Link van {formatDate(l.created_at, locale)} · {l.revoked_at ? "ingetrokken" : `geldig tot ${formatDate(l.expires_at, locale)}`}
+                      {l.last_used_at && <span className="block text-xs text-slate-500">Laatst gebruikt {formatDate(l.last_used_at, locale)}</span>}
+                    </span>
+                    {!l.revoked_at && (
+                      <form action={revokePortalLink}>
+                        <input type="hidden" name="customer_id" value={customer.id} />
+                        <input type="hidden" name="link_id" value={l.id} />
+                        <button type="submit" className="h-9 rounded-lg px-3 text-sm font-medium text-red-700 hover:bg-red-50">Intrekken</button>
+                      </form>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <CreatePortalLink customerId={customer.id} disabled={ctx.mode === "demo"} />
+          </CardBody>
+        </Card>
+      )}
 
       <Card className="mt-6">
         <CardHeader
