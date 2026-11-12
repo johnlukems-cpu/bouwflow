@@ -6,17 +6,21 @@ import { Badge, ProjectStatusBadge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, DescriptionList } from "@/components/ui/card";
 import { ConfirmAction } from "@/components/ui/confirm-action";
-import { FutureFeature } from "@/components/ui/future-feature";
+import { ModuleGate } from "@/components/ui/module-gate";
 import { PageHeader } from "@/components/ui/page-header";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { cn } from "@/components/ui/cn";
 import { getAppContext } from "@/lib/auth/context";
 import { can } from "@/lib/auth/permissions";
 import { getProject } from "@/lib/data/projects";
+import { getProjectFinancials } from "@/lib/data/finance";
+import { CalculationTab } from "./tabs/calculation";
+import { PlanningTab } from "./tabs/planning";
+import { DocumentsTab, HoursTab, InvoicesTab, MaterialsTab, PostCalcTab, PurchasingTab, QuotesTab, WorkOrdersTab } from "./tabs/other";
 import { formatMoney, formatPercent, toDecimal } from "@/lib/finance/money";
 import { marginPercent } from "@/lib/finance/postcalc";
 import { formatDate } from "@/lib/format";
-import { PROJECT_STATUSES, PROJECT_STATUS_LABELS, type Project } from "@/lib/types";
+import { PROJECT_STATUSES, PROJECT_STATUS_LABELS, type Project, type ProjectFinancials } from "@/lib/types";
 import { setProjectArchived, setProjectStatus } from "../actions";
 
 export const metadata: Metadata = { title: "Project" };
@@ -36,17 +40,6 @@ const TABS = [
 ] as const;
 type TabKey = (typeof TABS)[number]["key"];
 
-const FUTURE_TABS: Record<Exclude<TabKey, "overzicht" | "na-calculatie">, { title: string; text: string }> = {
-  planning: { title: "Projectplanning", text: "Fasen, mijlpalen en inzet van medewerkers en materieel per week, gekoppeld aan de module Planning." },
-  calculatie: { title: "Voorcalculatie", text: "Materiaal-, arbeids-, machine-, transport-, onderaannemer- en overige regels met automatisch berekende totalen. De rekenkern (incl. snijverlies en marge) is al gebouwd en getest." },
-  materialen: { title: "Materialen", text: "Begrote versus werkelijk verbruikte materialen, gekoppeld aan de materiaalbibliotheek en voorraad." },
-  uren: { title: "Uren", text: "Geregistreerde arbeidsuren en interne arbeidskosten, afkomstig uit werkbonnen." },
-  werkbonnen: { title: "Werkbonnen", text: "Digitale werkbonnen per medewerker en dag, met tijden, pauze, materialen en foto's — bruikbaar op de telefoon." },
-  inkoop: { title: "Inkoop", text: "Inkooporders en -facturen van leveranciers die aan dit project worden toegerekend." },
-  offertes: { title: "Offertes", text: "Offertes opgesteld vanuit de projectcalculatie, met eigen nummering, statussen en een momentopname van klant, prijzen en belastingregels." },
-  facturen: { title: "Facturen", text: "(Termijn)facturen vanuit dit project, betalingen en openstaande bedragen." },
-  documenten: { title: "Projectdocumenten", text: "Tekeningen, vergunningen en foto's. De beveiligde opslag per organisatie (Supabase Storage + RLS) is al voorbereid." },
-};
 
 export default async function ProjectDetailPage({ params, searchParams }: PageProps<"/projecten/[id]">) {
   const [{ id }, sp] = await Promise.all([params, searchParams]);
@@ -55,6 +48,7 @@ export default async function ProjectDetailPage({ params, searchParams }: PagePr
   if (!project) notFound();
   const tab: TabKey = TABS.some((t) => t.key === sp.tab) ? (sp.tab as TabKey) : "overzicht";
   const canWrite = can(ctx.membership.role, "projects.write");
+  const financials = tab === "overzicht" ? await getProjectFinancials(ctx, project.id) : null;
 
   return (
     <>
@@ -107,18 +101,22 @@ export default async function ProjectDetailPage({ params, searchParams }: PagePr
         </ul>
       </nav>
 
-      {tab === "overzicht" ? (
-        <Overview project={project} canWrite={canWrite} currency={ctx.settings.currency_code} locale={ctx.settings.locale} />
-      ) : tab === "na-calculatie" ? (
-        <PostCalcPreview project={project} locale={ctx.settings.locale} />
-      ) : (
-        <FutureFeature title={FUTURE_TABS[tab].title}>{FUTURE_TABS[tab].text}</FutureFeature>
-      )}
+      {tab === "overzicht" && <Overview project={project} canWrite={canWrite} currency={ctx.settings.currency_code} locale={ctx.settings.locale} financials={financials} />}
+      {tab === "planning" && <ModuleGate ctx={ctx} module="planning"><PlanningTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "calculatie" && <ModuleGate ctx={ctx} module="calculatie"><CalculationTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "materialen" && <ModuleGate ctx={ctx} module="materialen"><MaterialsTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "uren" && <ModuleGate ctx={ctx} module="uren"><HoursTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "werkbonnen" && <ModuleGate ctx={ctx} module="werkbonnen"><WorkOrdersTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "inkoop" && <ModuleGate ctx={ctx} module="inkoop"><PurchasingTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "offertes" && <ModuleGate ctx={ctx} module="offertes"><QuotesTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "facturen" && <ModuleGate ctx={ctx} module="facturatie"><InvoicesTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "na-calculatie" && <ModuleGate ctx={ctx} module="nacalculatie"><PostCalcTab ctx={ctx} project={project} /></ModuleGate>}
+      {tab === "documenten" && <ModuleGate ctx={ctx} module="documenten"><DocumentsTab ctx={ctx} project={project} /></ModuleGate>}
     </>
   );
 }
 
-function Overview({ project, canWrite, currency, locale }: { project: Project; canWrite: boolean; currency: string; locale: string }) {
+function Overview({ project, canWrite, currency, locale, financials }: { project: Project; canWrite: boolean; currency: string; locale: string; financials: ProjectFinancials | null }) {
   const cur = project.currency_code || currency;
   const budget = toDecimal(project.budget_amount);
   const revenue = toDecimal(project.contract_value);
@@ -160,7 +158,7 @@ function Overview({ project, canWrite, currency, locale }: { project: Project; c
 
       <div className="space-y-6">
         <Card>
-          <CardHeader title="Financieel overzicht" description="Op basis van projectgegevens (nog zonder voorcalculatie)." />
+          <CardHeader title="Financieel overzicht" description="Begroot budget en verkoopwaarde van het project." />
           <CardBody className="space-y-3 text-sm">
             <Row label="Begroot budget" value={formatMoney(budget, cur, locale)} />
             <Row label="Verkoopwaarde" value={formatMoney(revenue, cur, locale)} />
@@ -172,6 +170,14 @@ function Overview({ project, canWrite, currency, locale }: { project: Project; c
               />
               <Row label="Verwachte marge" value={margin ? formatPercent(margin, locale) : "n.v.t."} />
             </div>
+            {financials && (
+              <div className="space-y-3 border-t border-slate-100 pt-3">
+                <Row label="Werkelijke kosten" value={formatMoney(financials.actual_cost_total, cur, locale)} />
+                <Row label="Gefactureerd (excl.)" value={formatMoney(financials.invoiced_excl_tax, cur, locale)} />
+                <Row label="Ontvangen" value={formatMoney(financials.received_incl_tax, cur, locale)} />
+                <Link href={`/projecten/${project.id}?tab=na-calculatie`} className="inline-block text-sm font-medium text-brand-700 hover:underline">Volledige na-calculatie →</Link>
+              </div>
+            )}
           </CardBody>
         </Card>
 
@@ -204,63 +210,6 @@ function Row({ label, value, strong }: { label: string; value: React.ReactNode; 
     <div className="flex items-baseline justify-between gap-3">
       <span className="text-slate-500">{label}</span>
       <span className={cn("tabular-nums", strong ? "text-base font-semibold" : "font-medium text-slate-900")}>{value}</span>
-    </div>
-  );
-}
-
-function PostCalcPreview({ project, locale }: { project: Project; locale: string }) {
-  const cur = project.currency_code;
-  const budget = toDecimal(project.budget_amount);
-  const revenue = toDecimal(project.contract_value);
-  const profit = revenue.minus(budget);
-  const margin = marginPercent(profit, revenue);
-  return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader title="Begroting versus werkelijkheid" description="Werkelijke kosten en gerealiseerde omzet worden beschikbaar zodra kostenregistratie, werkbonnen en facturatie zijn gebouwd." />
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-5 py-3 text-left font-semibold">Onderdeel</th>
-                <th className="px-5 py-3 text-right font-semibold">Begroot</th>
-                <th className="px-5 py-3 text-right font-semibold">Werkelijk</th>
-                <th className="px-5 py-3 text-right font-semibold">Verschil</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              <tr>
-                <td className="px-5 py-3">Totale kosten</td>
-                <td className="px-5 py-3 text-right tabular-nums">{formatMoney(budget, cur, locale)}</td>
-                <td className="px-5 py-3 text-right text-slate-400">nog niet beschikbaar</td>
-                <td className="px-5 py-3 text-right text-slate-400">—</td>
-              </tr>
-              <tr>
-                <td className="px-5 py-3">Omzet</td>
-                <td className="px-5 py-3 text-right tabular-nums">{formatMoney(revenue, cur, locale)}</td>
-                <td className="px-5 py-3 text-right text-slate-400">nog niet beschikbaar</td>
-                <td className="px-5 py-3 text-right text-slate-400">—</td>
-              </tr>
-              <tr className="font-medium">
-                <td className="px-5 py-3">Winst</td>
-                <td className="px-5 py-3 text-right tabular-nums">{formatMoney(profit, cur, locale)}</td>
-                <td className="px-5 py-3 text-right text-slate-400">nog niet beschikbaar</td>
-                <td className="px-5 py-3 text-right text-slate-400">—</td>
-              </tr>
-              <tr>
-                <td className="px-5 py-3">Winstmarge</td>
-                <td className="px-5 py-3 text-right tabular-nums">{margin ? formatPercent(margin, locale) : "n.v.t."}</td>
-                <td className="px-5 py-3 text-right text-slate-400">nog niet beschikbaar</td>
-                <td className="px-5 py-3 text-right text-slate-400">—</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Card>
-      <FutureFeature title="Volledige na-calculatie">
-        Vergelijking per kostensoort (materiaal, arbeid en uren, machines, transport, onderaannemers, overig), budgetwaarschuwingen en een keuze van
-        omzetbasis (verkoopwaarde, gefactureerd of ontvangen). De rekenregels zijn al geïmplementeerd en getest.
-      </FutureFeature>
     </div>
   );
 }
