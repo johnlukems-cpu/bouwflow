@@ -54,7 +54,7 @@ export default async function SupplierPage({ params }: PageProps<"/leveranciers/
           <Card>
             <CardHeader title="Inkooporders" />
             {orders.length === 0 ? (
-              <p className="px-5 py-4 text-sm text-slate-500">Nog geen inkooporders bij deze leverancier.</p>
+              <p className="px-5 py-4 text-sm text-slate-600">Nog geen inkooporders bij deze leverancier.</p>
             ) : (
               <ul className="divide-y divide-slate-100">
                 {orders.map((o) => (
@@ -62,7 +62,7 @@ export default async function SupplierPage({ params }: PageProps<"/leveranciers/
                     <Link href={`/inkoop/${o.id}`} className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-slate-50">
                       <span>
                         <span className="font-medium text-slate-900">{o.purchase_order_number}</span>
-                        <span className="ml-2 text-sm text-slate-500">{formatDate(o.order_date)}</span>
+                        <span className="ml-2 text-sm text-slate-600">{formatDate(o.order_date)}</span>
                       </span>
                       <span className="flex items-center gap-3">
                         <span className="text-sm tabular-nums">{formatMoney(o.total ?? 0, o.currency_code, ctx.settings.locale)}</span>

@@ -53,7 +53,7 @@ export default async function PostCalcOverviewPage() {
                 <tr key={p.id} className="hover:bg-slate-50">
                   <Td>
                     <Link href={`/projecten/${p.id}?tab=na-calculatie`} className="font-medium text-slate-900 hover:text-brand-700">{p.name}</Link>
-                    <p className="font-mono text-xs text-slate-500">{p.project_number}</p>
+                    <p className="font-mono text-xs text-slate-600">{p.project_number}</p>
                   </Td>
                   <Td className="whitespace-nowrap text-right tabular-nums">{formatMoney(r.totalCost.budget, f.currency_code, locale)}</Td>
                   <Td className="whitespace-nowrap text-right tabular-nums">{formatMoney(r.totalCost.actual, f.currency_code, locale)}</Td>

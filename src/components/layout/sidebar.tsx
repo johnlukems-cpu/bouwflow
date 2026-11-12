@@ -13,7 +13,7 @@ export function SidebarNav({ onNavigate, modules, isPlatformAdmin }: { onNavigat
     <nav aria-label="Hoofdnavigatie" className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
       {NAV_GROUPS.map((group) => (
         <div key={group.label}>
-          <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40">{group.label}</p>
+          <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/70">{group.label}</p>
           <ul className="space-y-0.5">
             {group.items.map((item) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -32,7 +32,7 @@ export function SidebarNav({ onNavigate, modules, isPlatformAdmin }: { onNavigat
                     <Icon className={cn("size-4.5 shrink-0", active ? "text-accent-400" : "text-white/50 group-hover:text-white/80")} aria-hidden />
                     <span className="flex-1 truncate">{item.label}</span>
                     {!modules.includes(item.module) && (
-                      <Lock className="size-3.5 text-white/40" aria-label="Niet in uw abonnement" />
+                      <Lock className="size-3.5 text-white/60" aria-label="Niet in uw abonnement" />
                     )}
                   </Link>
                 </li>
@@ -43,7 +43,7 @@ export function SidebarNav({ onNavigate, modules, isPlatformAdmin }: { onNavigat
       ))}
       {isPlatformAdmin && (
         <div>
-          <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40">Platform</p>
+          <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/70">Platform</p>
           <Link href="/platform" onClick={onNavigate} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white">
             <ShieldCheck className="size-4.5 text-white/50" aria-hidden />
             Platformbeheer
@@ -61,9 +61,9 @@ export function Sidebar({ orgName, modules, isPlatformAdmin }: { orgName: string
         <BrandMark inverted />
       </div>
       <SidebarNav modules={modules} isPlatformAdmin={isPlatformAdmin} />
-      <div className="border-t border-white/10 px-5 py-3 text-xs text-white/50">
+      <div className="border-t border-white/10 px-5 py-3 text-xs text-white/80">
         <p className="truncate" title={orgName}>{orgName}</p>
-        <p className="mt-0.5 text-white/30">Projecten in vertrouwen.</p>
+        <p className="mt-0.5 text-white/70">Projecten in vertrouwen.</p>
       </div>
     </aside>
   );

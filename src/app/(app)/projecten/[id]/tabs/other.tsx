@@ -32,7 +32,7 @@ export async function MaterialsTab({ ctx, project }: Props) {
     <div className="grid gap-6 xl:grid-cols-2">
       <Card>
         <CardHeader title="Begrote materialen" description="Uit de voorcalculatie (incl. verlies)" />
-        {matLines.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen materiaalregels in de calculatie.</p> : (
+        {matLines.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen materiaalregels in de calculatie.</p> : (
           <Table>
             <thead><tr><Th>Materiaal</Th><Th className="text-right">Hoeveelheid</Th><Th className="text-right">Kosten</Th></tr></thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -45,12 +45,12 @@ export async function MaterialsTab({ ctx, project }: Props) {
       </Card>
       <Card>
         <CardHeader title="Werkelijk materiaalverbruik" description="Uit voorraaduitgifte, werkbonnen en inkoop (kostenregister)" />
-        {matCosts.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Nog geen materiaalkosten geboekt.</p> : (
+        {matCosts.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Nog geen materiaalkosten geboekt.</p> : (
           <Table>
             <thead><tr><Th>Datum</Th><Th>Omschrijving</Th><Th className="text-right">Bedrag</Th></tr></thead>
             <tbody className="divide-y divide-slate-100 bg-white">
               {matCosts.map((c) => (
-                <tr key={c.id}><Td className="whitespace-nowrap">{formatDate(c.entry_date)}</Td><Td>{c.description}<p className="text-xs text-slate-500">{SOURCE_LABELS[c.source_type]}</p></Td><Td className="whitespace-nowrap text-right tabular-nums">{m(c.amount)}</Td></tr>
+                <tr key={c.id}><Td className="whitespace-nowrap">{formatDate(c.entry_date)}</Td><Td>{c.description}<p className="text-xs text-slate-600">{SOURCE_LABELS[c.source_type]}</p></Td><Td className="whitespace-nowrap text-right tabular-nums">{m(c.amount)}</Td></tr>
               ))}
             </tbody>
           </Table>
@@ -58,7 +58,7 @@ export async function MaterialsTab({ ctx, project }: Props) {
       </Card>
       <Card className="xl:col-span-2">
         <CardHeader title="Voorraadmutaties voor dit project" actions={can(ctx.membership.role, "stock.write") && <LinkButton href="/voorraad" size="sm" variant="secondary">Uitgifte boeken</LinkButton>} />
-        {movements.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen voorraadmutaties.</p> : (
+        {movements.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen voorraadmutaties.</p> : (
           <Table>
             <thead><tr><Th>Datum</Th><Th>Artikel</Th><Th className="text-right">Hoeveelheid</Th></tr></thead>
             <tbody className="divide-y divide-slate-100 bg-white">
@@ -141,14 +141,14 @@ export async function PostCalcTab({ ctx, project }: Props) {
       <div className="grid gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2">
           <CardHeader title="Kostenregister" description="Elke werkelijke kost staat hier precies één keer, met de bron. Correcties boekt u als tegenboeking (negatief bedrag)." />
-          {costs.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Nog geen werkelijke kosten geboekt.</p> : (
+          {costs.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Nog geen werkelijke kosten geboekt.</p> : (
             <Table>
               <thead><tr><Th>Datum</Th><Th>Omschrijving</Th><Th className="hidden sm:table-cell">Bron</Th><Th className="text-right">Bedrag</Th></tr></thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {costs.map((c) => (
                   <tr key={c.id}>
                     <Td className="whitespace-nowrap">{formatDate(c.entry_date)}</Td>
-                    <Td>{c.description}<p className="text-xs text-slate-500">{COST_TYPE_LABELS[c.cost_type]}</p></Td>
+                    <Td>{c.description}<p className="text-xs text-slate-600">{COST_TYPE_LABELS[c.cost_type]}</p></Td>
                     <Td className="hidden sm:table-cell"><Badge tone={c.source_type === "manual" ? "slate" : "blue"}>{SOURCE_LABELS[c.source_type]}</Badge></Td>
                     <Td className="whitespace-nowrap text-right tabular-nums">{m(c.amount)}</Td>
                   </tr>

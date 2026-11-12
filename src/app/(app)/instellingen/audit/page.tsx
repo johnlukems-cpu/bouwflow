@@ -36,7 +36,7 @@ export default async function AuditPage() {
       <PageHeader title="Audit trail" breadcrumbs={[{ label: "Instellingen", href: "/instellingen" }, { label: "Audit trail" }]} description="Technisch logboek van alle wijzigingen aan bedrijfsgegevens (laatste 200). Het logboek kan niet worden gewijzigd." />
       <Card>
         <CardHeader title="Wijzigingen" />
-        {rows.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">{ctx.mode === "demo" ? "Niet beschikbaar in demo-modus." : "Nog geen wijzigingen."}</p> : (
+        {rows.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">{ctx.mode === "demo" ? "Niet beschikbaar in demo-modus." : "Nog geen wijzigingen."}</p> : (
           <Table>
             <thead><tr><Th>Tijdstip</Th><Th>Onderdeel</Th><Th>Actie</Th><Th className="hidden md:table-cell">Record</Th></tr></thead>
             <tbody className="divide-y divide-slate-100 bg-white">

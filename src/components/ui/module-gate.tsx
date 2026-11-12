@@ -9,7 +9,7 @@ export function ModuleGate({ ctx, module, children }: { ctx: AppContext; module:
   if (hasModule(ctx, module)) return <>{children}</>;
   return (
     <div className="mx-auto max-w-lg rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200">
-      <Lock className="mx-auto size-10 text-slate-400" aria-hidden />
+      <Lock className="mx-auto size-10 text-slate-500" aria-hidden />
       <h1 className="mt-4 text-lg font-semibold text-navy-900">{MODULE_LABELS[module]} zit niet in uw abonnement</h1>
       <p className="mt-2 text-sm text-slate-600">
         Uw huidige abonnement ({ctx.subscription.planName}) bevat deze module niet. Bekijk de mogelijkheden bij Instellingen → Abonnement.

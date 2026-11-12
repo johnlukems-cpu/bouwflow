@@ -32,7 +32,7 @@ export function FilterBar({ placeholder, children }: { placeholder: string; chil
   return (
     <div className="flex flex-col gap-3 border-b border-slate-100 p-4 lg:flex-row lg:items-center">
       <div className="relative flex-1">
-        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden />
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" aria-hidden />
         <input
           type="search"
           value={q}
@@ -40,12 +40,12 @@ export function FilterBar({ placeholder, children }: { placeholder: string; chil
           placeholder={placeholder}
           aria-label={placeholder}
           className={cn(
-            "h-10 w-full rounded-lg border-0 bg-white pl-9 pr-9 text-sm shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-brand-500",
+            "h-10 w-full rounded-lg border-0 bg-white pl-9 pr-9 text-sm shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-500 focus:ring-2 focus:ring-brand-500",
             pending && "opacity-70",
           )}
         />
         {q && (
-          <button type="button" onClick={() => setQ("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Zoekopdracht wissen">
+          <button type="button" onClick={() => setQ("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600" aria-label="Zoekopdracht wissen">
             <X className="size-4" />
           </button>
         )}

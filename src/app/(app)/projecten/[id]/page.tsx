@@ -57,7 +57,7 @@ export default async function ProjectDetailPage({ params, searchParams }: PagePr
         breadcrumbs={[{ label: "Projecten", href: "/projecten" }, { label: project.project_number }]}
         meta={
           <>
-            <span className="font-mono text-sm text-slate-500">{project.project_number}</span>
+            <span className="font-mono text-sm text-slate-600">{project.project_number}</span>
             <ProjectStatusBadge status={project.status} />
             {project.is_archived && <Badge tone="amber">Gearchiveerd</Badge>}
           </>
@@ -91,7 +91,7 @@ export default async function ProjectDetailPage({ params, searchParams }: PagePr
                 aria-current={tab === t.key ? "page" : undefined}
                 className={cn(
                   "-mb-px inline-block border-b-2 px-3 py-2.5 text-sm font-medium",
-                  tab === t.key ? "border-accent-500 text-navy-900" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700",
+                  tab === t.key ? "border-accent-500 text-navy-900" : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-700",
                 )}
               >
                 {t.label}
@@ -148,7 +148,7 @@ function Overview({ project, canWrite, currency, locale, financials }: { project
             />
             {project.description && (
               <div className="mt-6 rounded-lg bg-slate-50 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Omschrijving</p>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-600">Omschrijving</p>
                 <p className="mt-1 whitespace-pre-line text-sm text-slate-800">{project.description}</p>
               </div>
             )}
@@ -208,7 +208,7 @@ function Overview({ project, canWrite, currency, locale, financials }: { project
 function Row({ label, value, strong }: { label: string; value: React.ReactNode; strong?: boolean }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <span className="text-slate-500">{label}</span>
+      <span className="text-slate-600">{label}</span>
       <span className={cn("tabular-nums", strong ? "text-base font-semibold" : "font-medium text-slate-900")}>{value}</span>
     </div>
   );

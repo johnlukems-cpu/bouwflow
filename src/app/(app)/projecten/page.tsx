@@ -99,7 +99,7 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/project
                       <p className="font-medium text-slate-900">{p.name}</p>
                       <ProjectStatusBadge status={p.status} />
                     </div>
-                    <p className="mt-0.5 text-sm text-slate-500">
+                    <p className="mt-0.5 text-sm text-slate-600">
                       {p.project_number} · {p.customer?.name}
                     </p>
                     <p className="mt-1 text-sm tabular-nums text-slate-700">{formatMoney(p.contract_value, p.currency_code || cur, locale)}</p>
@@ -124,18 +124,18 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/project
                 <tbody className="divide-y divide-slate-100 bg-white">
                   {projects.map((p) => (
                     <tr key={p.id} className="hover:bg-slate-50">
-                      <Td className="whitespace-nowrap font-mono text-xs text-slate-500">{p.project_number}</Td>
+                      <Td className="whitespace-nowrap font-mono text-xs text-slate-600">{p.project_number}</Td>
                       <Td>
                         <Link href={`/projecten/${p.id}`} className="font-medium text-slate-900 hover:text-brand-700">
                           {p.name}
                         </Link>
                         {p.is_archived && <Badge className="ml-2">Gearchiveerd</Badge>}
-                        <p className="text-xs text-slate-500">{p.customer?.name}</p>
+                        <p className="text-xs text-slate-600">{p.customer?.name}</p>
                       </Td>
                       <Td><ProjectStatusBadge status={p.status} /></Td>
-                      <Td className="hidden whitespace-nowrap text-slate-500 xl:table-cell">{formatDate(p.start_date, locale)}</Td>
-                      <Td className="hidden whitespace-nowrap text-slate-500 lg:table-cell">{formatDate(p.expected_end_date, locale)}</Td>
-                      <Td className="hidden lg:table-cell">{p.project_manager_name ?? <span className="text-slate-400">—</span>}</Td>
+                      <Td className="hidden whitespace-nowrap text-slate-600 xl:table-cell">{formatDate(p.start_date, locale)}</Td>
+                      <Td className="hidden whitespace-nowrap text-slate-600 lg:table-cell">{formatDate(p.expected_end_date, locale)}</Td>
+                      <Td className="hidden lg:table-cell">{p.project_manager_name ?? <span className="text-slate-500">—</span>}</Td>
                       <Td className="whitespace-nowrap text-right tabular-nums">{formatMoney(p.budget_amount, p.currency_code || cur, locale)}</Td>
                       <Td className="whitespace-nowrap text-right tabular-nums font-medium text-slate-900">{formatMoney(p.contract_value, p.currency_code || cur, locale)}</Td>
                     </tr>
@@ -155,7 +155,7 @@ export default async function ProjectsPage({ searchParams }: PageProps<"/project
                 </tfoot>
               </Table>
             </div>
-            <p className="border-t border-slate-100 px-4 py-3 text-xs text-slate-500 md:hidden">{projects.length} projecten</p>
+            <p className="border-t border-slate-100 px-4 py-3 text-xs text-slate-600 md:hidden">{projects.length} projecten</p>
           </>
         )}
       </Card>

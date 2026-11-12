@@ -50,7 +50,7 @@ export default async function QuotePage({ params }: PageProps<"/offertes/[id]">)
           breadcrumbs={[{ label: "Offertes", href: "/offertes" }, { label: `${q.quote_number}${q.version > 1 ? ` v${q.version}` : ""}` }]}
           meta={
             <>
-              <span className="font-mono text-sm text-slate-500">{q.quote_number}{q.version > 1 && ` versie ${q.version}`}</span>
+              <span className="font-mono text-sm text-slate-600">{q.quote_number}{q.version > 1 && ` versie ${q.version}`}</span>
               <QuoteBadge status={q.status} validUntil={q.valid_until} today={today} />
             </>
           }

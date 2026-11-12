@@ -37,8 +37,8 @@ export default async function SubscriptionPage() {
               const on = ALWAYS_AVAILABLE_MODULES.includes(m) || s.modules.includes(m);
               return (
                 <li key={m} className="flex items-center gap-2 text-sm">
-                  {on ? <Check className="size-4 text-emerald-600" aria-hidden /> : <Lock className="size-4 text-slate-400" aria-hidden />}
-                  <span className={on ? "text-slate-800" : "text-slate-400"}>{MODULE_LABELS[m]}</span>
+                  {on ? <Check className="size-4 text-emerald-600" aria-hidden /> : <Lock className="size-4 text-slate-500" aria-hidden />}
+                  <span className={on ? "text-slate-800" : "text-slate-500"}>{MODULE_LABELS[m]}</span>
                 </li>
               );
             })}

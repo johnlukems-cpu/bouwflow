@@ -37,7 +37,7 @@ export default async function PaymentsPage() {
                 {payments.map((p) => (
                   <tr key={p.id}>
                     <Td className="whitespace-nowrap">{formatDate(p.paid_on)}</Td>
-                    <Td><Link href={`/facturatie/${p.invoice_id}`} className="font-medium text-brand-700 hover:underline">{p.invoice?.invoice_number ?? "Factuur"}</Link><p className="text-xs text-slate-500">{p.invoice?.title}</p></Td>
+                    <Td><Link href={`/facturatie/${p.invoice_id}`} className="font-medium text-brand-700 hover:underline">{p.invoice?.invoice_number ?? "Factuur"}</Link><p className="text-xs text-slate-600">{p.invoice?.title}</p></Td>
                     <Td className="hidden sm:table-cell">{PAYMENT_METHOD_LABELS[p.method]}</Td>
                     <Td className="hidden md:table-cell">{p.reference ?? "—"}</Td>
                     <Td className="whitespace-nowrap text-right tabular-nums">{formatMoney(p.amount, cur, locale)}</Td>

@@ -38,12 +38,12 @@ export default async function EstimatesPage() {
                   <tr key={p.id} className="hover:bg-slate-50">
                     <Td>
                       <Link href={`/projecten/${p.id}?tab=calculatie`} className="font-medium text-slate-900 hover:text-brand-700">{p.name}</Link>
-                      <p className="font-mono text-xs text-slate-500">{p.project_number}</p>
+                      <p className="font-mono text-xs text-slate-600">{p.project_number}</p>
                     </Td>
                     <Td className="hidden sm:table-cell"><ProjectStatusBadge status={p.status} /></Td>
                     <Td className="hidden md:table-cell text-right tabular-nums">{t?.lines ?? 0}</Td>
-                    <Td className="whitespace-nowrap text-right tabular-nums">{t ? formatMoney(t.cost_total, p.currency_code, locale) : <span className="text-slate-400">—</span>}</Td>
-                    <Td className="whitespace-nowrap text-right tabular-nums">{t ? formatMoney(t.sale_total, p.currency_code, locale) : <span className="text-slate-400">—</span>}</Td>
+                    <Td className="whitespace-nowrap text-right tabular-nums">{t ? formatMoney(t.cost_total, p.currency_code, locale) : <span className="text-slate-500">—</span>}</Td>
+                    <Td className="whitespace-nowrap text-right tabular-nums">{t ? formatMoney(t.sale_total, p.currency_code, locale) : <span className="text-slate-500">—</span>}</Td>
                     <Td className="hidden lg:table-cell text-right tabular-nums">{margin ? formatPercent(margin, locale) : "—"}</Td>
                   </tr>
                 );

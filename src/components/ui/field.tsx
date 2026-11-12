@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { cn } from "./cn";
 
 const control =
-  "block w-full rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 disabled:bg-slate-100 disabled:text-slate-500";
+  "block w-full rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-500 focus:ring-2 focus:ring-inset focus:ring-brand-500 disabled:bg-slate-100 disabled:text-slate-600";
 const invalid = "ring-red-400 focus:ring-red-500";
 
 interface FieldProps {
@@ -32,7 +32,7 @@ export function Field({ label, name, error, hint, required, className, children 
           {error}
         </p>
       ) : hint ? (
-        <p className="text-xs text-slate-500">{hint}</p>
+        <p className="text-xs text-slate-600">{hint}</p>
       ) : null}
     </div>
   );

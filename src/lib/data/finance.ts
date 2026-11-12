@@ -55,6 +55,15 @@ function mergeBalance(inv: Invoice, b?: { paid: unknown; credited: unknown; outs
   };
 }
 
+/** Saldi uit de view invoice_balances (apart opgehaald; views hebben geen foreign keys voor embedding). */
+async function balancesFor(ctx: AppContext, ids: string[]) {
+  if (ctx.mode === "demo" || ids.length === 0) return new Map<string, { paid: unknown; credited: unknown; outstanding: unknown; payment_status: unknown }>();
+  const rows = await load<{ invoice_id: string; paid: unknown; credited: unknown; outstanding: unknown; payment_status: unknown }[]>(ctx, "Saldi", () => [], (sb, org) =>
+    sb.from("invoice_balances").select("invoice_id, paid, credited, outstanding, payment_status").eq("organization_id", org).in("invoice_id", ids) as unknown as R<{ invoice_id: string; paid: unknown; credited: unknown; outstanding: unknown; payment_status: unknown }[]>,
+  );
+  return new Map(rows.map((r) => [r.invoice_id, r]));
+}
+
 export async function listInvoices(ctx: AppContext, opts: { status?: string; projectId?: string; customerId?: string; paymentStatus?: string } = {}): Promise<Invoice[]> {
   const today = todayISO(ctx.settings.timezone);
   const rows = await load(
@@ -65,22 +74,19 @@ export async function listInvoices(ctx: AppContext, opts: { status?: string; pro
         (i) => (!opts.status || i.status === opts.status) && (!opts.projectId || i.project_id === opts.projectId) && (!opts.customerId || i.customer_id === opts.customerId),
       ),
     (sb, org) => {
-      let q = sb
-        .from("invoices")
-        .select(`*, ${REL}, balance:invoice_balances(paid, credited, outstanding, payment_status)`)
-        .eq("organization_id", org)
-        .order("invoice_date", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(1000);
+      let q = sb.from("invoices").select(`*, ${REL}`).eq("organization_id", org).order("invoice_date", { ascending: false }).order("created_at", { ascending: false }).limit(1000);
       if (opts.status) q = q.eq("status", opts.status);
       if (opts.projectId && isUuid(opts.projectId)) q = q.eq("project_id", opts.projectId);
       if (opts.customerId && isUuid(opts.customerId)) q = q.eq("customer_id", opts.customerId);
-      return q as unknown as R<(Invoice & { balance?: unknown })[]>;
+      return q as unknown as R<Invoice[]>;
     },
   );
-  const list = (rows as (Invoice & { balance?: unknown })[]).map((r) =>
-    ctx.mode === "demo" ? r : mergeBalance(r, one(r.balance as { paid: unknown; credited: unknown; outstanding: unknown; payment_status: unknown } | null) ?? undefined),
-  );
+  let list: Invoice[];
+  if (ctx.mode === "demo") list = rows;
+  else {
+    const balances = await balancesFor(ctx, rows.map((r) => r.id));
+    list = rows.map((r) => mergeBalance(r, balances.get(r.id)));
+  }
   return opts.paymentStatus ? list.filter((i) => i.payment_status === opts.paymentStatus) : list;
 }
 
@@ -88,15 +94,10 @@ export async function getInvoice(ctx: AppContext, id: string): Promise<{ invoice
   if (!isUuid(id)) return null;
   const today = todayISO(ctx.settings.timezone);
   const inv = await load(ctx, "Factuur", () => demoInvoiceBalances(today).find((i) => i.id === id) ?? null, (sb, org) =>
-    sb
-      .from("invoices")
-      .select(`*, ${REL}, balance:invoice_balances(paid, credited, outstanding, payment_status)`)
-      .eq("organization_id", org)
-      .eq("id", id)
-      .maybeSingle() as unknown as R<Invoice & { balance?: unknown }>,
+    sb.from("invoices").select(`*, ${REL}`).eq("organization_id", org).eq("id", id).maybeSingle() as unknown as R<Invoice>,
   );
   if (!inv) return null;
-  const invoice = ctx.mode === "demo" ? inv : mergeBalance(inv, one((inv as { balance?: unknown }).balance as never) ?? undefined);
+  const invoice = ctx.mode === "demo" ? inv : mergeBalance(inv, (await balancesFor(ctx, [id])).get(id));
   const lines = await load(ctx, "Factuurregels", () => DEMO_DOC_LINES[id] ?? [], (sb, org) =>
     sb.from("invoice_lines").select("*").eq("organization_id", org).eq("invoice_id", id).order("sort_order").order("created_at") as unknown as R<DocumentLine[]>,
   );

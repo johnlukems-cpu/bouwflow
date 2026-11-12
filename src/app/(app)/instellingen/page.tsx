@@ -61,11 +61,11 @@ export default async function SettingsPage() {
                   <li key={t.id} className="flex items-center justify-between gap-3 px-5 py-3">
                     <div className="min-w-0">
                       <p className="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-900">
-                        {t.name} <span className="tabular-nums text-slate-500">{Number(t.rate_percent).toLocaleString("nl-NL")}%</span>
+                        {t.name} <span className="tabular-nums text-slate-600">{Number(t.rate_percent).toLocaleString("nl-NL")}%</span>
                         {t.is_default && <Badge tone="blue">Standaard</Badge>}
                         {t.is_archived && <Badge>Gearchiveerd</Badge>}
                       </p>
-                      {t.description && <p className="truncate text-xs text-slate-500">{t.description}</p>}
+                      {t.description && <p className="truncate text-xs text-slate-600">{t.description}</p>}
                     </div>
                     {canTax && (
                       <form action={updateTaxRate} className="flex shrink-0 gap-1">

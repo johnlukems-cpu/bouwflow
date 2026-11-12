@@ -41,7 +41,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
         breadcrumbs={[{ label: "Klanten", href: "/klanten" }, { label: customer.customer_number }]}
         meta={
           <>
-            <span className="font-mono text-sm text-slate-500">{customer.customer_number}</span>
+            <span className="font-mono text-sm text-slate-600">{customer.customer_number}</span>
             <Badge tone={customer.customer_type === "business" ? "blue" : "slate"}>{CUSTOMER_TYPE_LABELS[customer.customer_type]}</Badge>
             {customer.is_archived && <Badge tone="amber">Gearchiveerd</Badge>}
           </>
@@ -109,7 +109,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
             />
             {customer.notes && (
               <div className="mt-6 rounded-lg bg-slate-50 p-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Opmerkingen</p>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-600">Opmerkingen</p>
                 <p className="mt-1 whitespace-pre-line text-sm text-slate-800">{customer.notes}</p>
               </div>
             )}
@@ -119,9 +119,9 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
         <Card>
           <CardHeader title="Samenvatting" />
           <CardBody className="space-y-3 text-sm">
-            <div className="flex justify-between"><span className="text-slate-500">Projecten</span><span className="font-medium">{projects.length}</span></div>
-            <div className="flex justify-between"><span className="text-slate-500">Klant sinds</span><span className="font-medium">{formatDate(customer.created_at, locale)}</span></div>
-            <div className="flex justify-between"><span className="text-slate-500">Laatst gewijzigd</span><span className="font-medium">{formatDate(customer.updated_at, locale)}</span></div>
+            <div className="flex justify-between"><span className="text-slate-600">Projecten</span><span className="font-medium">{projects.length}</span></div>
+            <div className="flex justify-between"><span className="text-slate-600">Klant sinds</span><span className="font-medium">{formatDate(customer.created_at, locale)}</span></div>
+            <div className="flex justify-between"><span className="text-slate-600">Laatst gewijzigd</span><span className="font-medium">{formatDate(customer.updated_at, locale)}</span></div>
           </CardBody>
         </Card>
       </div>
@@ -136,7 +136,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
                   <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2 text-sm">
                     <span>
                       Link van {formatDate(l.created_at, locale)} · {l.revoked_at ? "ingetrokken" : `geldig tot ${formatDate(l.expires_at, locale)}`}
-                      {l.last_used_at && <span className="block text-xs text-slate-500">Laatst gebruikt {formatDate(l.last_used_at, locale)}</span>}
+                      {l.last_used_at && <span className="block text-xs text-slate-600">Laatst gebruikt {formatDate(l.last_used_at, locale)}</span>}
                     </span>
                     {!l.revoked_at && (
                       <form action={revokePortalLink}>
@@ -174,7 +174,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/klanten
                 <Link href={`/projecten/${p.id}`} className="flex flex-col gap-1 px-5 py-3 hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <p className="font-medium text-slate-900">{p.name}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-600">
                       {p.project_number} · {formatDate(p.start_date, locale)} – {formatDate(p.expected_end_date, locale)}
                     </p>
                   </div>

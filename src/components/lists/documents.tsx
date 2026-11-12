@@ -20,14 +20,14 @@ export function DocumentList({ documents, demo, canUpload, hidden, back, title =
             const Icon = d.mime_type.startsWith("image/") ? FileImage : File;
             return (
               <li key={d.id} className="flex items-center gap-3 px-5 py-3">
-                <Icon className="size-5 shrink-0 text-slate-400" aria-hidden />
+                <Icon className="size-5 shrink-0 text-slate-500" aria-hidden />
                 <div className="min-w-0 flex-1">
                   {demo ? (
                     <span className="block truncate font-medium text-slate-900">{d.name}</span>
                   ) : (
                     <a href={`/documenten/${d.id}/download`} className="block truncate font-medium text-brand-700 hover:underline">{d.name}</a>
                   )}
-                  <p className="text-xs text-slate-500">{CAT[d.category] ?? d.category} · {formatBytes(d.size_bytes)} · {formatDate(d.created_at)}</p>
+                  <p className="text-xs text-slate-600">{CAT[d.category] ?? d.category} · {formatBytes(d.size_bytes)} · {formatDate(d.created_at)}</p>
                 </div>
               </li>
             );

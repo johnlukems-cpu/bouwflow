@@ -103,7 +103,7 @@ export default async function DashboardPage() {
       </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
           <Card>
             <CardHeader title="Waarschuwingen en meldingen" />
             {alerts.length === 0 ? (
@@ -126,19 +126,19 @@ export default async function DashboardPage() {
           <Card>
             <CardHeader title="Openstaande taken" description="Taken voor vandaag en wachtend op goedkeuring" />
             {tasks.length === 0 && woSubmitted.length === 0 && teSubmitted.length === 0 ? (
-              <CardBody className="text-sm text-slate-500">Geen openstaande taken.</CardBody>
+              <CardBody className="text-sm text-slate-600">Geen openstaande taken.</CardBody>
             ) : (
               <ul className="divide-y divide-slate-100">
                 {woSubmitted.length > 0 && (
-                  <li><Link href="/werkbonnen?status=submitted" className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-slate-50"><ClipboardCheck className="size-5 text-accent-600" aria-hidden /><span className="flex-1">{woSubmitted.length} werkbon(nen) wachten op goedkeuring</span></Link></li>
+                  <li><Link href="/werkbonnen?status=submitted" className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-slate-50"><ClipboardCheck className="size-5 text-accent-700" aria-hidden /><span className="flex-1">{woSubmitted.length} werkbon(nen) wachten op goedkeuring</span></Link></li>
                 )}
                 {teSubmitted.length > 0 && (
-                  <li><Link href="/uren?status=submitted" className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-slate-50"><ClipboardCheck className="size-5 text-accent-600" aria-hidden /><span className="flex-1">{teSubmitted.length} urenregistratie(s) wachten op goedkeuring</span></Link></li>
+                  <li><Link href="/uren?status=submitted" className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-slate-50"><ClipboardCheck className="size-5 text-accent-700" aria-hidden /><span className="flex-1">{teSubmitted.length} urenregistratie(s) wachten op goedkeuring</span></Link></li>
                 )}
                 {tasks.filter((t) => t.status !== "done" && t.status !== "cancelled").map((t) => (
                   <li key={t.id}>
                     <Link href={`/projecten/${t.project_id}?tab=planning`} className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-slate-50">
-                      <span className="min-w-0 flex-1"><span className="block truncate font-medium">{t.title}</span><span className="block truncate text-xs text-slate-500">{t.project?.project_number} · {t.employee?.full_name ?? "Niet toegewezen"} · t/m {formatDate(t.end_date)}</span></span>
+                      <span className="min-w-0 flex-1"><span className="block truncate font-medium">{t.title}</span><span className="block truncate text-xs text-slate-600">{t.project?.project_number} · {t.employee?.full_name ?? "Niet toegewezen"} · t/m {formatDate(t.end_date)}</span></span>
                       <TaskBadge status={t.status} />
                     </Link>
                   </li>
@@ -178,7 +178,7 @@ export default async function DashboardPage() {
                 {data.recentActivity.map((a) => (
                   <li key={a.id} className="px-5 py-3">
                     <p className="text-sm text-slate-800">{humanizeActivity(a.summary)}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">{formatDateTime(a.created_at, locale, timezone)}</p>
+                    <p className="mt-0.5 text-xs text-slate-600">{formatDateTime(a.created_at, locale, timezone)}</p>
                   </li>
                 ))}
               </ul>

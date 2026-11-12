@@ -45,7 +45,7 @@ export default async function EmployeesPage() {
             <tbody className="divide-y divide-slate-100 bg-white">
               {employees.map((e) => (
                 <tr key={e.id} className="hover:bg-slate-50">
-                  <Td className="font-mono text-xs text-slate-500">{e.employee_number}</Td>
+                  <Td className="font-mono text-xs text-slate-600">{e.employee_number}</Td>
                   <Td>
                     <Link href={`/medewerkers/${e.id}`} className="font-medium text-slate-900 hover:text-brand-700">{e.full_name}</Link>
                     {!e.is_active && <Badge className="ml-2">Inactief</Badge>}
@@ -53,7 +53,7 @@ export default async function EmployeesPage() {
                   <Td className="hidden md:table-cell">{e.job_title ?? "—"}</Td>
                   <Td className="hidden sm:table-cell text-right tabular-nums">{formatMoney(e.hourly_cost, cur, locale)}</Td>
                   <Td className="hidden lg:table-cell text-right tabular-nums">{formatMoney(e.hourly_rate, cur, locale)}</Td>
-                  <Td className="hidden md:table-cell">{e.member_id ? <Badge tone="green">Gekoppeld</Badge> : <span className="text-slate-400">—</span>}</Td>
+                  <Td className="hidden md:table-cell">{e.member_id ? <Badge tone="green">Gekoppeld</Badge> : <span className="text-slate-500">—</span>}</Td>
                 </tr>
               ))}
             </tbody>

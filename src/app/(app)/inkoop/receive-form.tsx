@@ -16,11 +16,11 @@ export function ReceiveForm({ lineId, orderId, remaining, today, unit, disabled 
       <input type="hidden" name="purchase_order_id" value={orderId} />
       <input type="hidden" name="idempotency_key" value={key} />
       <label className="text-xs">
-        <span className="mb-1 block text-slate-500">Ontvangen ({unit})</span>
+        <span className="mb-1 block text-slate-600">Ontvangen ({unit})</span>
         <input name="quantity" inputMode="decimal" defaultValue={remaining.replace(".", ",")} className="h-10 w-28 rounded-lg border-0 px-2 text-sm tabular-nums ring-1 ring-inset ring-slate-300" />
       </label>
       <label className="text-xs">
-        <span className="mb-1 block text-slate-500">Datum</span>
+        <span className="mb-1 block text-slate-600">Datum</span>
         <input name="received_on" type="date" defaultValue={today} className="h-10 rounded-lg border-0 px-2 text-sm ring-1 ring-inset ring-slate-300" />
       </label>
       <SubmitButton size="sm" variant="info" disabled={disabled} pendingText="Boeken…">Ontvangst boeken</SubmitButton>

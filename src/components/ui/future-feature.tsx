@@ -6,7 +6,7 @@ export function FutureFeature({ title, children, compact }: { title: string; chi
   return (
     <div className={compact ? "rounded-lg border border-dashed border-slate-300 bg-slate-50/60 p-4" : "rounded-xl border border-dashed border-slate-300 bg-white p-6"}>
       <div className="flex items-start gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
           <Clock className="size-5" aria-hidden />
         </span>
         <div className="min-w-0">

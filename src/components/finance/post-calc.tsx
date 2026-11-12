@@ -26,7 +26,7 @@ export function postCalcFromFinancials(f: ProjectFinancials, basis: RevenueBasis
 }
 
 function Variance({ value, currency, locale, invert = false, unit }: { value: ReturnType<typeof toDecimal>; currency: string; locale: string; invert?: boolean; unit?: string }) {
-  if (value.isZero()) return <span className="text-slate-500">0</span>;
+  if (value.isZero()) return <span className="text-slate-600">0</span>;
   // Voor kosten: positief verschil = duurder dan begroot (ongunstig)
   const unfavourable = invert ? value.isNegative() : value.isPositive();
   return (
@@ -64,9 +64,9 @@ export function PostCalcTable({ financials: f, basis, warningPercent, locale }: 
           Dit project heeft nog geen voorcalculatie; het totale begrote budget wordt als één post vergeleken.
         </p>
       )}
-      <div className="overflow-x-auto rounded-xl ring-1 ring-slate-200">
+      <div className="relative overflow-x-auto rounded-xl ring-1 ring-slate-200">
         <table className="min-w-full bg-white text-sm">
-          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
             <tr>
               <th className="px-4 py-3 text-left font-semibold">Onderdeel</th>
               <th className="px-4 py-3 text-right font-semibold">Begroot</th>
@@ -100,7 +100,7 @@ export function PostCalcTable({ financials: f, basis, warningPercent, locale }: 
               <td className="px-4 py-3 text-right tabular-nums"><Variance value={r.totalCost.variance} currency={cur} locale={locale} /></td>
             </tr>
             <tr>
-              <td className="px-4 py-2.5">Omzet <span className="text-xs text-slate-500">({REVENUE_BASIS_LABELS[basis]})</span></td>
+              <td className="px-4 py-2.5">Omzet <span className="text-xs text-slate-600">({REVENUE_BASIS_LABELS[basis]})</span></td>
               <td className="px-4 py-2.5 text-right tabular-nums">{m(r.revenue.budget)}</td>
               <td className="px-4 py-2.5 text-right tabular-nums">{m(r.revenue.realized)}</td>
               <td className="px-4 py-2.5 text-right tabular-nums"><Variance value={r.revenue.realized.minus(r.revenue.budget)} currency={cur} locale={locale} invert /></td>
@@ -122,21 +122,21 @@ export function PostCalcTable({ financials: f, basis, warningPercent, locale }: 
       </div>
       <dl className="grid gap-3 text-sm sm:grid-cols-3">
         <div className="rounded-lg bg-white p-3 ring-1 ring-slate-200">
-          <dt className="text-xs uppercase tracking-wide text-slate-500">Verkoopwaarde (opdracht)</dt>
+          <dt className="text-xs uppercase tracking-wide text-slate-600">Verkoopwaarde (opdracht)</dt>
           <dd className="mt-1 font-semibold tabular-nums">{m(f.contract_value)}</dd>
         </div>
         <div className="rounded-lg bg-white p-3 ring-1 ring-slate-200">
-          <dt className="text-xs uppercase tracking-wide text-slate-500">Gefactureerd (excl. belasting)</dt>
+          <dt className="text-xs uppercase tracking-wide text-slate-600">Gefactureerd (excl. belasting)</dt>
           <dd className="mt-1 font-semibold tabular-nums">{m(f.invoiced_excl_tax)}</dd>
-          <dd className="text-xs text-slate-500">incl. belasting {m(f.invoiced_incl_tax)}</dd>
+          <dd className="text-xs text-slate-600">incl. belasting {m(f.invoiced_incl_tax)}</dd>
         </div>
         <div className="rounded-lg bg-white p-3 ring-1 ring-slate-200">
-          <dt className="text-xs uppercase tracking-wide text-slate-500">Ontvangen betalingen</dt>
+          <dt className="text-xs uppercase tracking-wide text-slate-600">Ontvangen betalingen</dt>
           <dd className="mt-1 font-semibold tabular-nums">{m(f.received_incl_tax)}</dd>
-          <dd className="text-xs text-slate-500">≈ {m(f.received_excl_tax)} excl. belasting</dd>
+          <dd className="text-xs text-slate-600">≈ {m(f.received_excl_tax)} excl. belasting</dd>
         </div>
       </dl>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-slate-600">
         Kostenverschil = werkelijk − begroot. Winst = omzet − kosten. Marge = winst / omzet × 100% (alleen bij omzet &gt; 0). De omzetbasis stelt u in bij Instellingen; gefactureerde
         bedragen, ontvangen betalingen en verkoopwaarde blijven altijd apart zichtbaar.
       </p>

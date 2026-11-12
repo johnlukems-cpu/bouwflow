@@ -5,14 +5,18 @@ import { cn } from "./cn";
 
 export function Table({ children }: { children: ReactNode }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
       <table className="min-w-full divide-y divide-slate-200 text-sm">{children}</table>
     </div>
   );
 }
 
-export function Th({ children, className }: { children?: ReactNode; className?: string }) {
-  return <th scope="col" className={cn("bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500", className)}>{children}</th>;
+export function Th({ children, className, sort }: { children?: ReactNode; className?: string; sort?: "ascending" | "descending" }) {
+  return (
+    <th scope="col" aria-sort={sort} className={cn("bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600", className)}>
+      {children}
+    </th>
+  );
 }
 
 export function Td({ children, className }: { children?: ReactNode; className?: string }) {
@@ -43,12 +47,8 @@ export function SortTh({
   Object.entries({ ...params, sort: column, dir: nextDir }).forEach(([k, v]) => v && sp.set(k, v));
   const Icon = active ? (dir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
   return (
-    <Th className={className}>
-      <Link
-        href={`${basePath}?${sp.toString()}`}
-        className={cn("inline-flex items-center gap-1 hover:text-slate-800", active && "text-slate-800")}
-        aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : undefined}
-      >
+    <Th className={className} sort={active ? (dir === "asc" ? "ascending" : "descending") : undefined}>
+      <Link href={`${basePath}?${sp.toString()}`} className={cn("inline-flex items-center gap-1 hover:text-slate-800", active && "text-slate-800")}>
         {label}
         <Icon className="size-3.5" aria-hidden />
       </Link>

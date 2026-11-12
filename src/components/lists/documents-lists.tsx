@@ -24,13 +24,13 @@ export function QuoteTable({ quotes, locale, today, showCustomer = true }: { quo
       <tbody className="divide-y divide-slate-100 bg-white">
         {quotes.map((q) => (
           <tr key={q.id} className="hover:bg-slate-50">
-            <Td className="whitespace-nowrap font-mono text-xs text-slate-500">
+            <Td className="whitespace-nowrap font-mono text-xs text-slate-600">
               {q.quote_number}
-              {q.version > 1 && <span className="ml-1 text-slate-400">v{q.version}</span>}
+              {q.version > 1 && <span className="ml-1 text-slate-500">v{q.version}</span>}
             </Td>
             <Td>
               <Link href={`/offertes/${q.id}`} className="font-medium text-slate-900 hover:text-brand-700">{q.title}</Link>
-              {q.project && <p className="text-xs text-slate-500">{q.project.project_number} {q.project.name}</p>}
+              {q.project && <p className="text-xs text-slate-600">{q.project.project_number} {q.project.name}</p>}
             </Td>
             {showCustomer && <Td className="hidden md:table-cell">{q.customer?.name}</Td>}
             <Td className="hidden sm:table-cell whitespace-nowrap">{formatDate(q.quote_date)}</Td>
@@ -61,7 +61,7 @@ export function InvoiceTable({ invoices, locale, showCustomer = true }: { invoic
       <tbody className="divide-y divide-slate-100 bg-white">
         {invoices.map((i) => (
           <tr key={i.id} className="hover:bg-slate-50">
-            <Td className="whitespace-nowrap font-mono text-xs text-slate-500">{i.invoice_number ?? "Concept"}</Td>
+            <Td className="whitespace-nowrap font-mono text-xs text-slate-600">{i.invoice_number ?? "Concept"}</Td>
             <Td>
               <Link href={`/facturatie/${i.id}`} className="font-medium text-slate-900 hover:text-brand-700">{i.title}</Link>
               <div className="mt-0.5"><InvoiceTypeBadge type={i.invoice_type} /></div>

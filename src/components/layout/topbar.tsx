@@ -46,14 +46,14 @@ export function Topbar({ ctx }: { ctx: AppContext }) {
       <div className="flex items-center gap-3">
         <div className="hidden text-right sm:block">
           <p className="text-sm font-medium text-slate-800">{ctx.user.name}</p>
-          <p className="text-xs text-slate-500">{ROLE_LABELS[ctx.membership.role]}</p>
+          <p className="text-xs text-slate-600">{ROLE_LABELS[ctx.membership.role]}</p>
         </div>
         <span className="flex size-9 items-center justify-center rounded-full bg-navy-900 text-sm font-semibold text-white" aria-hidden>
           {initials || "?"}
         </span>
         {ctx.mode === "supabase" && (
           <form action={signOut}>
-            <button type="submit" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800" aria-label="Uitloggen" title="Uitloggen">
+            <button type="submit" className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 hover:text-slate-800" aria-label="Uitloggen" title="Uitloggen">
               <LogOut className="size-5" />
             </button>
           </form>

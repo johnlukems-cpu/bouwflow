@@ -57,7 +57,7 @@ export default async function UsersPage() {
           <tbody className="divide-y divide-slate-100 bg-white">
             {members.map((m) => (
               <tr key={m.id}>
-                <Td className="font-medium">{m.name}{m.user_id === ctx.user.id && <span className="ml-1 text-xs text-slate-500">(u)</span>}</Td>
+                <Td className="font-medium">{m.name}{m.user_id === ctx.user.id && <span className="ml-1 text-xs text-slate-600">(u)</span>}</Td>
                 <Td className="hidden md:table-cell">{m.email ?? "—"}</Td>
                 <Td><Badge tone="blue">{ROLE_LABELS[m.role as keyof typeof ROLE_LABELS] ?? m.role}</Badge></Td>
                 <Td>{m.is_active ? <Badge tone="green">Actief</Badge> : <Badge>Gedeactiveerd</Badge>}</Td>
@@ -87,11 +87,11 @@ export default async function UsersPage() {
           </Card>
           <Card>
             <CardHeader title="Openstaande uitnodigingen" />
-            {invitations.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen openstaande uitnodigingen.</p> : (
+            {invitations.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen openstaande uitnodigingen.</p> : (
               <ul className="divide-y divide-slate-100">
                 {invitations.map((i) => (
                   <li key={i.id} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
-                    <span>{i.email} · {ROLE_LABELS[i.role as keyof typeof ROLE_LABELS]}<span className="block text-xs text-slate-500">Geldig tot {formatDate(i.expires_at)}</span></span>
+                    <span>{i.email} · {ROLE_LABELS[i.role as keyof typeof ROLE_LABELS]}<span className="block text-xs text-slate-600">Geldig tot {formatDate(i.expires_at)}</span></span>
                     <form action={revokeInvitation}><input type="hidden" name="id" value={i.id} /><Button type="submit" size="sm" variant="ghost">Intrekken</Button></form>
                   </li>
                 ))}
@@ -111,7 +111,7 @@ export default async function UsersPage() {
             <li><strong>Medewerker</strong> — lezen; eigen uren en werkbonnen registreren (account koppelen bij Medewerkers).</li>
             <li><strong>Alleen lezen</strong> — alles inzien, niets wijzigen.</li>
           </ul>
-          <p className="mt-3 text-xs text-slate-500">Rechten worden in de database afgedwongen (Row Level Security), niet alleen in de interface.</p>
+          <p className="mt-3 text-xs text-slate-600">Rechten worden in de database afgedwongen (Row Level Security), niet alleen in de interface.</p>
         </CardBody>
       </Card>
     </div>

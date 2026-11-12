@@ -18,7 +18,7 @@ export function PageHeader({
   return (
     <div className="mb-6">
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav aria-label="Kruimelpad" className="mb-2 flex flex-wrap items-center gap-1 text-sm text-slate-500">
+        <nav aria-label="Kruimelpad" className="mb-2 flex flex-wrap items-center gap-1 text-sm text-slate-600">
           {breadcrumbs.map((b, i) => (
             <span key={`${b.label}-${i}`} className="flex items-center gap-1">
               {i > 0 && <ChevronRight className="size-3.5" aria-hidden />}

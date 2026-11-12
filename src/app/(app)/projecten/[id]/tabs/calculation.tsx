@@ -32,9 +32,9 @@ export async function CalculationTab({ ctx, project }: { ctx: AppContext; projec
         {lines.length === 0 ? (
           <EmptyState icon={Calculator} title="Nog geen calculatieregels" description="Voeg hieronder regels toe, eventueel vanuit de materiaalbibliotheek." />
         ) : (
-          <div className="overflow-x-auto">
+          <div className="relative overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
                 <tr>
                   <th className="px-3 py-2 text-left">Soort</th>
                   <th className="px-3 py-2 text-left">Omschrijving</th>
@@ -49,10 +49,10 @@ export async function CalculationTab({ ctx, project }: { ctx: AppContext; projec
               <tbody className="divide-y divide-slate-100">
                 {lines.map((l) => (
                   <tr key={l.id}>
-                    <td className="whitespace-nowrap px-3 py-2 text-slate-500">{COST_TYPE_LABELS[l.cost_type]}</td>
+                    <td className="whitespace-nowrap px-3 py-2 text-slate-600">{COST_TYPE_LABELS[l.cost_type]}</td>
                     <td className="px-3 py-2">
                       {l.description}
-                      {l.article_number && <span className="ml-1 font-mono text-xs text-slate-400">{l.article_number}</span>}
+                      {l.article_number && <span className="ml-1 font-mono text-xs text-slate-500">{l.article_number}</span>}
                     </td>
                     <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums">{Number(l.quantity).toLocaleString("nl-NL")} {l.unit}</td>
                     <td className="hidden px-3 py-2 text-right tabular-nums md:table-cell">{Number(l.waste_percent) ? `${Number(l.waste_percent).toLocaleString("nl-NL")}%` : "—"}</td>
@@ -64,7 +64,7 @@ export async function CalculationTab({ ctx, project }: { ctx: AppContext; projec
                         <form action={deleteEstimateLine}>
                           <input type="hidden" name="project_id" value={project.id} />
                           <input type="hidden" name="line_id" value={l.id} />
-                          <button type="submit" className="rounded p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label={`Regel ${l.description} verwijderen`}>
+                          <button type="submit" className="rounded p-1.5 text-slate-500 hover:bg-red-50 hover:text-red-600" aria-label={`Regel ${l.description} verwijderen`}>
                             <Trash2 className="size-4" />
                           </button>
                         </form>

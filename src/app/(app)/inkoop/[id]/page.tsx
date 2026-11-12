@@ -76,7 +76,7 @@ export default async function PurchaseOrderPage({ params }: PageProps<"/inkoop/[
 
         <Card>
           <CardHeader title="Orderregels" description="Levering naar voorraad verhoogt de voorraad; levering naar een project boekt direct de kosten op dat project." />
-          {lines.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Nog geen regels.</p> : (
+          {lines.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Nog geen regels.</p> : (
             <ul className="divide-y divide-slate-100">
               {lines.map((l) => {
                 const remaining = toDecimal(l.quantity).minus(l.quantity_received);
@@ -85,7 +85,7 @@ export default async function PurchaseOrderPage({ params }: PageProps<"/inkoop/[
                     <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <p className="font-medium text-slate-900">{l.description}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-600">
                           {Number(l.quantity).toLocaleString("nl-NL")} {l.unit} × {m(l.unit_cost)} ·{" "}
                           <Badge tone={l.destination === "stock" ? "blue" : "orange"}>{l.destination === "stock" ? "Naar voorraad" : `Project — ${COST_TYPE_LABELS[l.cost_type]}`}</Badge>
                         </p>
@@ -97,7 +97,7 @@ export default async function PurchaseOrderPage({ params }: PageProps<"/inkoop/[
                           <form action={removePurchaseLine}>
                             <input type="hidden" name="purchase_order_id" value={o.id} />
                             <input type="hidden" name="line_id" value={l.id} />
-                            <button type="submit" className="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label={`${l.description} verwijderen`}><Trash2 className="size-4" /></button>
+                            <button type="submit" className="rounded p-2 text-slate-500 hover:bg-red-50 hover:text-red-600" aria-label={`${l.description} verwijderen`}><Trash2 className="size-4" /></button>
                           </form>
                         )}
                       </div>

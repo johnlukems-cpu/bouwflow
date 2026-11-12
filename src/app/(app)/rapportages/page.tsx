@@ -61,7 +61,7 @@ export default async function ReportsPage({ searchParams }: PageProps<"/rapporta
                     <div className="w-1/2 rounded-t bg-navy-800" style={{ height: `${(r.invoicedIncl.toNumber() / max) * 100}%` }} />
                     <div className="w-1/2 rounded-t bg-accent-500" style={{ height: `${(r.received.toNumber() / max) * 100}%` }} />
                   </div>
-                  <span className="text-[11px] text-slate-500">{MONTHS[i]}</span>
+                  <span className="text-[11px] text-slate-600">{MONTHS[i]}</span>
                 </div>
               ))}
             </div>

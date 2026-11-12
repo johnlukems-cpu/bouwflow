@@ -49,7 +49,7 @@ export default async function InvoicePage({ params }: PageProps<"/facturatie/[id
           breadcrumbs={[{ label: "Facturatie", href: "/facturatie" }, { label: inv.invoice_number ?? "Concept" }]}
           meta={
             <>
-              <span className="font-mono text-sm text-slate-500">{inv.invoice_number ?? "Concept (nog geen nummer)"}</span>
+              <span className="font-mono text-sm text-slate-600">{inv.invoice_number ?? "Concept (nog geen nummer)"}</span>
               <InvoiceTypeBadge type={inv.invoice_type} />
               {inv.payment_status && <PaymentBadge status={inv.payment_status} />}
             </>

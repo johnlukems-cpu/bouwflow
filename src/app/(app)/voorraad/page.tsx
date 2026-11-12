@@ -57,7 +57,7 @@ export default async function StockPage() {
                     <tr key={s.material_id}>
                       <Td>
                         <Link href={`/materialen/${s.material_id}`} className="font-medium text-slate-900 hover:text-brand-700">{s.description}</Link>
-                        <p className="font-mono text-xs text-slate-500">{s.article_number}</p>
+                        <p className="font-mono text-xs text-slate-600">{s.article_number}</p>
                       </Td>
                       <Td className="whitespace-nowrap text-right tabular-nums">
                         {Number(s.on_hand).toLocaleString("nl-NL")} {s.unit} {isLow && <Badge tone="red" className="ml-1">Laag</Badge>}
@@ -96,7 +96,7 @@ export default async function StockPage() {
       <Card className="mt-6">
         <CardHeader title="Recente mutaties" />
         {movements.length === 0 ? (
-          <p className="px-5 py-4 text-sm text-slate-500">Nog geen mutaties.</p>
+          <p className="px-5 py-4 text-sm text-slate-600">Nog geen mutaties.</p>
         ) : (
           <Table>
             <thead>

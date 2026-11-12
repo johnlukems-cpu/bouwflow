@@ -38,11 +38,11 @@ export function DocumentLinesCard({
     <Card>
       <CardHeader title="Regels" description={pricesIncludeTax ? "Prijzen zijn inclusief belasting." : "Prijzen zijn exclusief belasting."} />
       {lines.length === 0 ? (
-        <p className="px-5 py-4 text-sm text-slate-500">Nog geen regels.</p>
+        <p className="px-5 py-4 text-sm text-slate-600">Nog geen regels.</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="relative overflow-x-auto">
           <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
               <tr>
                 <th className="px-4 py-2 text-left">Omschrijving</th>
                 <th className="px-4 py-2 text-right">Aantal</th>
@@ -67,7 +67,7 @@ export function DocumentLinesCard({
                       <form action={removeAction}>
                         <input type="hidden" name={parentField} value={parentId} />
                         <input type="hidden" name="line_id" value={l.id} />
-                        <button type="submit" className="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label={`Regel ${l.description} verwijderen`}>
+                        <button type="submit" className="rounded p-2 text-slate-500 hover:bg-red-50 hover:text-red-600" aria-label={`Regel ${l.description} verwijderen`}>
                           <Trash2 className="size-4" />
                         </button>
                       </form>

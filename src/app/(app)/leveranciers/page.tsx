@@ -50,15 +50,15 @@ export default async function SuppliersPage({ searchParams }: PageProps<"/levera
             <tbody className="divide-y divide-slate-100 bg-white">
               {suppliers.map((s) => (
                 <tr key={s.id} className="hover:bg-slate-50">
-                  <Td className="whitespace-nowrap font-mono text-xs text-slate-500">{s.supplier_number}</Td>
+                  <Td className="whitespace-nowrap font-mono text-xs text-slate-600">{s.supplier_number}</Td>
                   <Td>
                     <Link href={`/leveranciers/${s.id}`} className="font-medium text-slate-900 hover:text-brand-700">{s.name}</Link>
-                    <p className="text-xs text-slate-500 sm:hidden">{SUPPLIER_TYPE_LABELS[s.supplier_type]}</p>
+                    <p className="text-xs text-slate-600 sm:hidden">{SUPPLIER_TYPE_LABELS[s.supplier_type]}</p>
                   </Td>
                   <Td className="hidden sm:table-cell"><Badge tone={s.supplier_type === "subcontractor" ? "purple" : "blue"}>{SUPPLIER_TYPE_LABELS[s.supplier_type]}</Badge></Td>
                   <Td className="hidden md:table-cell">
-                    <div>{s.contact_person ?? <span className="text-slate-400">—</span>}</div>
-                    {s.phone && <div className="text-xs text-slate-500">{s.phone}</div>}
+                    <div>{s.contact_person ?? <span className="text-slate-500">—</span>}</div>
+                    {s.phone && <div className="text-xs text-slate-600">{s.phone}</div>}
                   </Td>
                   <Td className="hidden lg:table-cell">{s.city ?? "—"}</Td>
                 </tr>

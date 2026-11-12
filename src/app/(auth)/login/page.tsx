@@ -13,12 +13,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <>
       <h1 className="mb-1 text-center text-xl font-semibold text-navy-900">Inloggen</h1>
-      <p className="mb-6 text-center text-sm text-slate-500">Log in op uw BouwFlow-omgeving</p>
+      <p className="mb-6 text-center text-sm text-slate-600">Log in op uw BouwFlow-omgeving</p>
       {mode !== "supabase" && (
         <div className="mb-4 space-y-3">
           <FormAlert tone="info" message="Supabase is nog niet gekoppeld; inloggen werkt pas na het instellen van de verbinding." />
           {mode === "demo" && (
-            <Link href="/dashboard" className="block text-center text-sm font-medium text-accent-600 hover:text-accent-700">
+            <Link href="/dashboard" className="block text-center text-sm font-medium text-accent-700 hover:text-accent-700">
               Bekijk de demo-omgeving (alleen-lezen) →
             </Link>
           )}

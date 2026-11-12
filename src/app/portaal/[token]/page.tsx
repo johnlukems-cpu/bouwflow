@@ -54,7 +54,7 @@ export default async function PortalPage({ params, searchParams }: PageProps<"/p
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4 py-4">
           <div>
             <p className="text-lg font-semibold text-navy-900">{o.organization.legal_name || o.organization.name}</p>
-            <p className="text-xs text-slate-500">{[o.organization.address_line, o.organization.city, o.organization.phone, o.organization.email].filter(Boolean).join(" · ")}</p>
+            <p className="text-xs text-slate-600">{[o.organization.address_line, o.organization.city, o.organization.phone, o.organization.email].filter(Boolean).join(" · ")}</p>
           </div>
           <Image src="/brand/bouwflow-compact-light.png" alt="BouwFlow" width={796} height={160} className="h-7 w-auto opacity-80" />
         </div>
@@ -69,11 +69,11 @@ export default async function PortalPage({ params, searchParams }: PageProps<"/p
 
         <Card>
           <CardHeader title="Projecten" />
-          {o.projects.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen projecten.</p> : (
+          {o.projects.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen projecten.</p> : (
             <ul className="divide-y divide-slate-100">
               {o.projects.map((p) => (
                 <li key={p.project_number} className="flex items-center justify-between gap-3 px-5 py-3 text-sm">
-                  <span>{p.name}<span className="block text-xs text-slate-500">{p.project_number} · {formatDate(p.start_date)} – {formatDate(p.expected_end_date)}</span></span>
+                  <span>{p.name}<span className="block text-xs text-slate-600">{p.project_number} · {formatDate(p.start_date)} – {formatDate(p.expected_end_date)}</span></span>
                   <Badge tone="blue">{PROJECT_STATUS_LABELS[p.status]}</Badge>
                 </li>
               ))}
@@ -83,14 +83,14 @@ export default async function PortalPage({ params, searchParams }: PageProps<"/p
 
         <Card>
           <CardHeader title="Offertes" />
-          {o.quotes.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen offertes.</p> : (
+          {o.quotes.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen offertes.</p> : (
             <ul className="divide-y divide-slate-100">
               {o.quotes.map((q) => {
                 const open = q.status === "sent" && (!q.valid_until || q.valid_until >= today);
                 return (
                   <li key={q.id} className="space-y-3 px-5 py-4">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <p className="font-medium">{q.title} <span className="text-xs text-slate-500">{q.quote_number}{q.version > 1 && ` v${q.version}`}</span></p>
+                      <p className="font-medium">{q.title} <span className="text-xs text-slate-600">{q.quote_number}{q.version > 1 && ` v${q.version}`}</span></p>
                       <Badge tone={q.status === "accepted" ? "green" : q.status === "rejected" ? "red" : "blue"}>{QUOTE_STATUS_LABELS[q.status]}</Badge>
                     </div>
                     {q.lines && (
@@ -117,18 +117,18 @@ export default async function PortalPage({ params, searchParams }: PageProps<"/p
 
         <Card>
           <CardHeader title="Facturen" />
-          {o.invoices.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen facturen.</p> : (
+          {o.invoices.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen facturen.</p> : (
             <ul className="divide-y divide-slate-100">
               {o.invoices.map((i) => (
                 <li key={i.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-sm">
-                  <span>{i.title}<span className="block text-xs text-slate-500">{i.invoice_number} · vervalt {formatDate(i.due_date)}</span></span>
+                  <span>{i.title}<span className="block text-xs text-slate-600">{i.invoice_number} · vervalt {formatDate(i.due_date)}</span></span>
                   <span className="flex items-center gap-3"><span className="tabular-nums">{m(i.total, i.currency_code)}</span><Badge tone={i.payment_status === "paid" ? "green" : i.payment_status === "overdue" ? "red" : "amber"}>{PAYMENT_STATUS_LABELS[i.payment_status]}</Badge></span>
                 </li>
               ))}
             </ul>
           )}
         </Card>
-        <CardBody className="text-center text-xs text-slate-500">Deze pagina is persoonlijk. Deel de link niet met anderen. Mogelijk gemaakt door BouwFlow — Projecten in vertrouwen.</CardBody>
+        <CardBody className="text-center text-xs text-slate-600">Deze pagina is persoonlijk. Deel de link niet met anderen. Mogelijk gemaakt door BouwFlow — Projecten in vertrouwen.</CardBody>
       </main>
     </div>
   );

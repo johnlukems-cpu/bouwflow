@@ -32,7 +32,7 @@ export default async function PlatformPage() {
             <li key={o.organization_id} className="px-5 py-4">
               <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
                 <p className="font-medium text-slate-900">{o.name}</p>
-                <p className="text-xs text-slate-500">Sinds {formatDate(o.created_at)} · {o.member_count} gebruiker(s)</p>
+                <p className="text-xs text-slate-600">Sinds {formatDate(o.created_at)} · {o.member_count} gebruiker(s)</p>
               </div>
               <form action={setSubscription} className="flex flex-wrap items-end gap-2 text-sm">
                 <input type="hidden" name="organization_id" value={o.organization_id} />

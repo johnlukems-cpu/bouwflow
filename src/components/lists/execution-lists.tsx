@@ -27,7 +27,7 @@ export function WorkOrderTable({ workOrders, showProject = true }: { workOrders:
           <tr key={w.id} className="hover:bg-slate-50">
             <Td className="whitespace-nowrap">
               <Link href={`/werkbonnen/${w.id}`} className="font-medium text-slate-900 hover:text-brand-700">{w.work_order_number}</Link>
-              <p className="max-w-[16rem] truncate text-xs text-slate-500 md:hidden">{w.employee?.full_name}</p>
+              <p className="max-w-[16rem] truncate text-xs text-slate-600 md:hidden">{w.employee?.full_name}</p>
             </Td>
             <Td className="whitespace-nowrap">{formatDate(w.work_date)}</Td>
             <Td className="hidden md:table-cell">{w.employee?.full_name}</Td>
@@ -91,7 +91,7 @@ export function TimeEntryTable({ entries, canApprove, back, showProject = true, 
           <tr key={t.id}>
             <Td className="whitespace-nowrap">
               {formatDate(t.entry_date)}
-              {t.start_time && <p className="text-xs text-slate-500">{t.start_time.slice(0, 5)}–{t.end_time?.slice(0, 5)}</p>}
+              {t.start_time && <p className="text-xs text-slate-600">{t.start_time.slice(0, 5)}–{t.end_time?.slice(0, 5)}</p>}
             </Td>
             <Td>{t.employee?.full_name}</Td>
             {showProject && <Td className="hidden lg:table-cell">{t.project?.project_number} {t.project?.name}</Td>}

@@ -27,7 +27,7 @@ export async function PlanningTab({ ctx, project }: { ctx: AppContext; project: 
               <li key={t.id} className="flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <p className="font-medium text-slate-900">{t.title}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-600">
                     {formatDate(t.start_date)} – {formatDate(t.end_date)} · {t.employee?.full_name ?? "Niet toegewezen"}
                     {t.planned_hours && ` · ${Number(t.planned_hours).toLocaleString("nl-NL")} uur`}
                   </p>

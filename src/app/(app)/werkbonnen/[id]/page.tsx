@@ -82,7 +82,7 @@ export default async function WorkOrderPage({ params }: PageProps<"/werkbonnen/[
               ]}
             />
             <div className="mt-5 rounded-lg bg-slate-50 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Uitgevoerde werkzaamheden</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-600">Uitgevoerde werkzaamheden</p>
               <p className="mt-1 whitespace-pre-line text-sm">{w.work_description}</p>
               {w.notes && <p className="mt-3 whitespace-pre-line text-sm text-slate-600">{w.notes}</p>}
             </div>
@@ -91,7 +91,7 @@ export default async function WorkOrderPage({ params }: PageProps<"/werkbonnen/[
 
         <Card>
           <CardHeader title="Gebruikte materialen" description="Materialen met voorraadbeheer worden bij goedkeuring van de voorraad afgeboekt." />
-          {materials.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen materialen geregistreerd.</p> : (
+          {materials.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen materialen geregistreerd.</p> : (
             <ul className="divide-y divide-slate-100">
               {materials.map((m) => (
                 <li key={m.id} className="flex items-center justify-between gap-3 px-5 py-3">
@@ -102,7 +102,7 @@ export default async function WorkOrderPage({ params }: PageProps<"/werkbonnen/[
                       <form action={removeWorkOrderMaterial}>
                         <input type="hidden" name="work_order_id" value={w.id} />
                         <input type="hidden" name="material_line_id" value={m.id} />
-                        <button type="submit" className="rounded p-2 text-slate-400 hover:bg-red-50 hover:text-red-600" aria-label={`${m.description} verwijderen`}><Trash2 className="size-4" /></button>
+                        <button type="submit" className="rounded p-2 text-slate-500 hover:bg-red-50 hover:text-red-600" aria-label={`${m.description} verwijderen`}><Trash2 className="size-4" /></button>
                       </form>
                     )}
                   </span>

@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <Sidebar orgName={ctx.membership.organization.name} modules={enabledModules(ctx)} isPlatformAdmin={ctx.isPlatformAdmin} />
       <div className="lg:pl-64">
         {ctx.mode === "demo" && (
-          <div className="no-print bg-accent-500 px-4 py-2 text-center text-sm font-medium text-white">
+          <div className="no-print bg-accent-500 px-4 py-2 text-center text-sm font-semibold text-navy-900">
             <span className="sm:hidden">Demo-modus — fictieve gegevens, alleen-lezen</span>
             <span className="hidden sm:inline">
               Demo-modus — u bekijkt fictieve voorbeeldgegevens. Wijzigingen worden niet opgeslagen. Koppel Supabase om met echte gegevens te werken.

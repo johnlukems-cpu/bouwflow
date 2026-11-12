@@ -84,7 +84,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/klante
                       <p className="font-medium text-slate-900">{c.name}</p>
                       <Badge tone={c.customer_type === "business" ? "blue" : "slate"}>{CUSTOMER_TYPE_LABELS[c.customer_type]}</Badge>
                     </div>
-                    <p className="mt-0.5 text-sm text-slate-500">
+                    <p className="mt-0.5 text-sm text-slate-600">
                       {c.customer_number}
                       {c.city && ` · ${c.city}`}
                       {c.is_archived && " · Gearchiveerd"}
@@ -109,29 +109,29 @@ export default async function CustomersPage({ searchParams }: PageProps<"/klante
                 <tbody className="divide-y divide-slate-100 bg-white">
                   {customers.map((c) => (
                     <tr key={c.id} className="hover:bg-slate-50">
-                      <Td className="whitespace-nowrap font-mono text-xs text-slate-500">{c.customer_number}</Td>
+                      <Td className="whitespace-nowrap font-mono text-xs text-slate-600">{c.customer_number}</Td>
                       <Td>
                         <Link href={`/klanten/${c.id}`} className="font-medium text-slate-900 hover:text-brand-700">
                           {c.name}
                         </Link>
                         {c.is_archived && <Badge className="ml-2">Gearchiveerd</Badge>}
-                        {c.contact_person && <p className="text-xs text-slate-500">t.a.v. {c.contact_person}</p>}
+                        {c.contact_person && <p className="text-xs text-slate-600">t.a.v. {c.contact_person}</p>}
                       </Td>
                       <Td>
                         <Badge tone={c.customer_type === "business" ? "blue" : "slate"}>{CUSTOMER_TYPE_LABELS[c.customer_type]}</Badge>
                       </Td>
                       <Td>
-                        <div className="text-sm">{c.email ?? <span className="text-slate-400">—</span>}</div>
-                        {c.phone && <div className="text-xs text-slate-500">{c.phone}</div>}
+                        <div className="text-sm">{c.email ?? <span className="text-slate-500">—</span>}</div>
+                        {c.phone && <div className="text-xs text-slate-600">{c.phone}</div>}
                       </Td>
-                      <Td>{c.city ?? <span className="text-slate-400">—</span>}</Td>
-                      <Td className="hidden whitespace-nowrap text-slate-500 lg:table-cell">{formatDate(c.created_at, ctx.settings.locale)}</Td>
+                      <Td>{c.city ?? <span className="text-slate-500">—</span>}</Td>
+                      <Td className="hidden whitespace-nowrap text-slate-600 lg:table-cell">{formatDate(c.created_at, ctx.settings.locale)}</Td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
             </div>
-            <p className="border-t border-slate-100 px-4 py-3 text-xs text-slate-500">
+            <p className="border-t border-slate-100 px-4 py-3 text-xs text-slate-600">
               {customers.length} {customers.length === 1 ? "klant" : "klanten"}
             </p>
           </>

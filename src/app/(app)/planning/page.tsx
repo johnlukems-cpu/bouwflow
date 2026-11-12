@@ -53,9 +53,9 @@ export default async function PlanningPage({ searchParams }: PageProps<"/plannin
         }
       />
       <Card>
-        <div className="overflow-x-auto">
+        <div className="relative overflow-x-auto">
           <table className="min-w-[56rem] w-full table-fixed text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
               <tr>
                 <th className="w-44 px-3 py-2 text-left">Medewerker</th>
                 {days.map((d, i) => (
@@ -77,7 +77,7 @@ export default async function PlanningPage({ searchParams }: PageProps<"/plannin
                           .map((t) => (
                             <Link key={t.id} href={`/projecten/${t.project_id}?tab=planning`} className="mb-1 block rounded-md bg-brand-50 px-2 py-1 text-xs text-brand-700 ring-1 ring-brand-100 hover:bg-brand-100" title={`${t.title} — ${t.project?.name ?? ""}`}>
                               <span className="block truncate font-medium">{t.title}</span>
-                              <span className="block truncate text-[11px] text-slate-500">{t.project?.project_number}</span>
+                              <span className="block truncate text-[11px] text-slate-600">{t.project?.project_number}</span>
                             </Link>
                           ))}
                       </td>
@@ -92,13 +92,13 @@ export default async function PlanningPage({ searchParams }: PageProps<"/plannin
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2">
           <CardHeader title="Taken deze week" />
-          {tasks.length === 0 ? <p className="px-5 py-4 text-sm text-slate-500">Geen taken gepland in deze week.</p> : (
+          {tasks.length === 0 ? <p className="px-5 py-4 text-sm text-slate-600">Geen taken gepland in deze week.</p> : (
             <ul className="divide-y divide-slate-100">
               {tasks.map((t) => (
                 <li key={t.id} className="flex items-center justify-between gap-3 px-5 py-3">
                   <div className="min-w-0">
                     <p className="truncate font-medium">{t.title}</p>
-                    <p className="truncate text-xs text-slate-500">{t.project?.project_number} {t.project?.name} · {t.employee?.full_name ?? "Niet toegewezen"}</p>
+                    <p className="truncate text-xs text-slate-600">{t.project?.project_number} {t.project?.name} · {t.employee?.full_name ?? "Niet toegewezen"}</p>
                   </div>
                   <TaskBadge status={t.status} />
                 </li>

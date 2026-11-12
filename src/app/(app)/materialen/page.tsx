@@ -55,7 +55,7 @@ export default async function MaterialsPage({ searchParams }: PageProps<"/materi
             <tbody className="divide-y divide-slate-100 bg-white">
               {materials.map((m) => (
                 <tr key={m.id} className="hover:bg-slate-50">
-                  <Td className="whitespace-nowrap font-mono text-xs text-slate-500">{m.article_number}</Td>
+                  <Td className="whitespace-nowrap font-mono text-xs text-slate-600">{m.article_number}</Td>
                   <Td>
                     <Link href={`/materialen/${m.id}`} className="font-medium text-slate-900 hover:text-brand-700">{m.description}</Link>
                     {m.track_stock && <Badge tone="blue" className="ml-2">Voorraad</Badge>}

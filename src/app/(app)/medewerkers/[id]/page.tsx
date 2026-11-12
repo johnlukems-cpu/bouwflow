@@ -33,7 +33,7 @@ export default async function EmployeePage({ params }: PageProps<"/medewerkers/[
         <Card>
           <CardHeader title="Recente uren" />
           {entries.length === 0 ? (
-            <p className="px-5 py-4 text-sm text-slate-500">Nog geen uren geregistreerd.</p>
+            <p className="px-5 py-4 text-sm text-slate-600">Nog geen uren geregistreerd.</p>
           ) : (
             <Table>
               <thead>
