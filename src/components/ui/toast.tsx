@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FLASH_MESSAGES, type FlashKey } from "@/lib/flash";
@@ -33,7 +33,40 @@ export function FlashToast() {
   }, [current, seen]);
 
   const message = current ? FLASH_MESSAGES[current] : null;
-  if (!message) return null;
+
+  // Foutmelding uit een workflowstap (cookie gezet door de server)
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )bf_fout=([^;]*)/);
+    if (!match) return;
+    document.cookie = "bf_fout=; Max-Age=0; path=/; SameSite=Strict";
+    let text = "";
+    try {
+      text = decodeURIComponent(decodeURIComponent(match[1]));
+    } catch {
+      text = "De actie is niet gelukt.";
+    }
+    const show = setTimeout(() => setError(text.slice(0, 300)), 0);
+    const hide = setTimeout(() => setError(null), 9000);
+    return () => {
+      clearTimeout(show);
+      clearTimeout(hide);
+    };
+  }, [pathname, params]);
+  if (!message && !error) return null;
+  if (error) {
+    return (
+      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 sm:justify-end sm:px-6">
+        <div role="alert" className="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl bg-red-700 p-4 text-sm text-white shadow-lg">
+          <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden />
+          <p className="flex-1">{error}</p>
+          <button type="button" onClick={() => setError(null)} className="text-white/80 hover:text-white" aria-label="Melding sluiten">
+            <X className="size-4" />
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 sm:justify-end sm:px-6">
       <div role="status" className="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl bg-navy-900 p-4 text-sm text-white shadow-lg">

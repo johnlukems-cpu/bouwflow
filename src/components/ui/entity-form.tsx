@@ -147,12 +147,14 @@ export function InlineForm({
   hidden = {},
   submitLabel,
   disabled,
+  initialValues = {},
 }: {
   action: (state: EntityFormState, formData: FormData) => Promise<EntityFormState>;
   fields: FieldDef[];
   hidden?: Record<string, string>;
   submitLabel: string;
   disabled?: boolean;
+  initialValues?: Record<string, string>;
 }) {
   const [state, formAction] = useActionState(action, {});
   return (
@@ -161,7 +163,7 @@ export function InlineForm({
         <input key={k} type="hidden" name={k} value={v} />
       ))}
       <FormAlert message={state.message} />
-      <FormFields fields={fields} values={state.values ?? {}} errors={state.errors ?? {}} />
+      <FormFields fields={fields} values={state.values ?? initialValues} errors={state.errors ?? {}} />
       <SubmitButton variant="secondary" disabled={disabled}>
         {submitLabel}
       </SubmitButton>
