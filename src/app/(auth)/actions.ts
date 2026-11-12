@@ -134,3 +134,37 @@ export async function createOrganization(_prev: AuthFormState, formData: FormDat
   });
   redirect(withFlash("/dashboard", "welkom"));
 }
+
+const resetSchema = z.object({ email: z.email("Vul een geldig e-mailadres in") });
+
+/** Vraagt een herstellink aan. Antwoordt altijd hetzelfde (geen informatie over bestaande accounts). */
+export async function requestPasswordReset(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const blocked = requireSupabaseMode();
+  if (blocked) return blocked;
+  const raw = formDataToObject(formData);
+  const parsed = resetSchema.safeParse(raw);
+  if (!parsed.success) return { errors: toFieldErrors(parsed.error), values: { email: raw.email ?? "" } };
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, { redirectTo: `${getSiteUrl()}/auth/callback?volgende=/wachtwoord-wijzigen` });
+  return { info: "Als dit e-mailadres bij ons bekend is, ontvangt u binnen enkele minuten een link om een nieuw wachtwoord in te stellen." };
+}
+
+const newPasswordSchema = z
+  .object({
+    password: signUpSchema.shape.password,
+    confirm: z.string(),
+  })
+  .refine((v) => v.password === v.confirm, { message: "De wachtwoorden komen niet overeen", path: ["confirm"] });
+
+export async function updatePassword(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const blocked = requireSupabaseMode();
+  if (blocked) return blocked;
+  const parsed = newPasswordSchema.safeParse(formDataToObject(formData));
+  if (!parsed.success) return { errors: toFieldErrors(parsed.error) };
+  const supabase = await createSupabaseServerClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) redirect("/login?fout=link");
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) return { message: error.code === "same_password" ? "Kies een ander wachtwoord dan uw huidige." : "Het wachtwoord kon niet worden gewijzigd." };
+  redirect(withFlash("/dashboard", "opgeslagen"));
+}

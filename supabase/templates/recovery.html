@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="nl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nieuw wachtwoord instellen</title></head>
+<body style="margin:0;background:#F4F6F8;font-family:Arial,Helvetica,sans-serif;color:#333B45">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F6F8;padding:24px 12px">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFFFF;border-radius:12px;overflow:hidden">
+        <tr><td style="height:5px;background:#F28A00"></td></tr>
+        <tr><td style="padding:28px 32px 8px">
+          <img src="{{ .SiteURL }}/brand/bouwflow-compact-light.png" alt="BouwFlow" width="180" style="display:block;height:auto;border:0">
+        </td></tr>
+        <tr><td style="padding:8px 32px 8px">
+          <h1 style="margin:0 0 12px;font-size:20px;color:#102D50">Nieuw wachtwoord instellen</h1>
+          <p style="margin:0 0 20px;font-size:15px;line-height:1.5">U heeft gevraagd om uw wachtwoord opnieuw in te stellen. Deze link is beperkt geldig.</p>
+          <p style="margin:0 0 24px"><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&volgende=/wachtwoord-wijzigen" style="display:inline-block;background:#F28A00;color:#102D50;font-weight:bold;text-decoration:none;padding:12px 20px;border-radius:8px">Nieuw wachtwoord instellen</a></p>
+          <p style="margin:0 0 8px;font-size:12px;color:#6B7480">Werkt de knop niet? Kopieer dan deze link in uw browser:<br><span style="word-break:break-all">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&volgende=/wachtwoord-wijzigen</span></p>
+          <p style="margin:16px 0 0;font-size:12px;color:#6B7480">Heeft u dit niet aangevraagd? Negeer deze e-mail; uw wachtwoord blijft ongewijzigd.</p>
+        </td></tr>
+        <tr><td style="padding:20px 32px 28px;font-size:12px;color:#6B7480;border-top:1px solid #DDE2E8">BouwFlow — Projecten in vertrouwen.</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

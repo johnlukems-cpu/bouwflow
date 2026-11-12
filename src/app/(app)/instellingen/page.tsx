@@ -30,6 +30,7 @@ export default async function SettingsPage() {
           <>
             <LinkButton href="/instellingen/gebruikers" variant="secondary">Gebruikers en rechten</LinkButton>
             <LinkButton href="/instellingen/abonnement" variant="secondary">Abonnement</LinkButton>
+            {can(ctx.membership.role, "audit.read") && <LinkButton href="/instellingen/audit" variant="secondary">Audit trail</LinkButton>}
           </>
         }
       />

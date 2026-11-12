@@ -18,6 +18,9 @@ export function LoginForm({ next, disabled }: { next?: string; disabled?: boolea
       <Field label="Wachtwoord" name="password" error={state.errors?.password} required>
         <Input name="password" type="password" autoComplete="current-password" required error={state.errors?.password} disabled={disabled} />
       </Field>
+      <p className="-mt-2 text-right text-sm">
+        <Link href="/wachtwoord-vergeten" className="font-medium text-brand-700 hover:underline">Wachtwoord vergeten?</Link>
+      </p>
       <SubmitButton className="w-full" pendingText="Bezig met inloggen…" disabled={disabled}>
         Inloggen
       </SubmitButton>

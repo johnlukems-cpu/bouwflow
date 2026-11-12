@@ -11,7 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:db": "bash scripts/test-db.sh",
-    "check": "npm run lint && npm run typecheck && npm run test"
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "test:backup": "bash scripts/test-backup-restore.sh",
+    "test:all": "npm run check && npm run test:db && npm run test:backup && npm run build"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.9.0",
