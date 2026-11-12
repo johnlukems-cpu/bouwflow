@@ -39,7 +39,6 @@ const PAGES = ["/login", "/registreren", "/wachtwoord-vergeten", "/dashboard", "
       if (vp.name === "desktop") {
         await page.addScriptTag({ content: axeSource });
         const res = await page.evaluate(async () => {
-          // eslint-disable-next-line no-undef
           const r = await axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] } });
           return r.violations.map((v) => ({ id: v.id, impact: v.impact, n: v.nodes.length, target: v.nodes[0]?.target?.[0] }));
         });
