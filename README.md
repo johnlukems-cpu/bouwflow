@@ -1,112 +1,46 @@
 # BouwFlow
 
-**Projecten in vertrouwen.** BouwFlow is een multi-tenant SaaS-platform voor bouw- en installatiebedrijven: van materiaalberekening en offerte tot projectuitvoering, facturatie en na-calculatie.
+**Projecten in vertrouwen.** BouwFlow is een multi-tenant SaaS-platform voor bouw-, installatie-, elektrotechnische, loodgieters-, HVAC- en onderhoudsbedrijven in Suriname. Het ondersteunt het volledige proces van calculatie tot na-calculatie: klanten, projecten, planning, voorcalculatie, inkoop, voorraad, werkbonnen, uren, offertes, facturen, betalingen en rapportages.
 
-Stack: Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Supabase (PostgreSQL, Auth, Storage, Row Level Security) · Vitest · Vercel.
+Stack: Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · Supabase (PostgreSQL, Auth, Storage, Row Level Security) · react-pdf · Vitest · Playwright/axe-core.
 
----
+> **Status:** functioneel compleet en uitgebreid getest tegen PostgreSQL, maar **nog niet gekoppeld aan een echte Supabase-omgeving**. Lees [docs/PRODUCTIE-READINESS.md](docs/PRODUCTIE-READINESS.md) voordat u live gaat.
 
-## Status: fase 1 (technische basis)
+## Documentatie
 
-| Onderdeel | Status |
+| Document | Inhoud |
 | --- | --- |
-| App-shell: sidebar, topbar, mobiele navigatie, alle 17 modules in het menu | ✅ Werkend |
-| Authenticatie: registreren, inloggen, uitloggen, e-mailbevestiging | ✅ Gebouwd (werkt na koppeling met Supabase) |
-| Onboarding: organisatie aanmaken (gebruiker wordt eigenaar) | ✅ Gebouwd (werkt na koppeling met Supabase) |
-| Dashboard met KPI's en recente activiteiten | ✅ Werkend (KPI's voor offertes, facturen en werkelijke kosten zijn als "nog niet beschikbaar" gemarkeerd) |
-| Klanten: toevoegen, bekijken, wijzigen, archiveren/herstellen, zoeken, filteren, sorteren, projecten per klant | ✅ Werkend |
-| Projecten: toevoegen, bekijken, wijzigen, status wijzigen, archiveren, zoeken, filteren, sorteren, detailpagina met 11 tabbladen | ✅ Werkend (tabbladen behalve Overzicht zijn gemarkeerd als toekomstige functionaliteit) |
-| Instellingen: bedrijfsgegevens, valuta, taal, belastingtarieven, nummering, omzetbasis | ✅ Werkend |
-| Database-migraties met RLS, multi-tenant isolatie, rollen, documentnummering, activiteitenlog, beveiligde opslag | ✅ Gebouwd en getest |
-| Financiële rekenkern: voorcalculatie, belasting op documenten, betalingen, na-calculatie | ✅ Gebouwd en getest (nog niet gekoppeld aan schermen) |
-| Leveranciers, materiaalberekening, voorraad, planning, medewerkers, werkbonnen, inkoop, offertes, facturatie, betalingen, na-calculatie, rapportages, documenten | 🕒 Toekomstige fase; elke module heeft een informatiepagina die duidelijk als "Toekomstige functionaliteit" is gemarkeerd |
+| [docs/INSTALLATIE.md](docs/INSTALLATIE.md) | Lokale installatie en Supabase koppelen |
+| [docs/HOSTING-EN-DEPLOYMENT.md](docs/HOSTING-EN-DEPLOYMENT.md) | Hosting (Vercel), domein, back-ups, monitoring |
+| [docs/EXTERNE-CONFIGURATIE.md](docs/EXTERNE-CONFIGURATIE.md) | Wat u zelf nog moet instellen of laten valideren |
+| [docs/PRODUCTIE-READINESS.md](docs/PRODUCTIE-READINESS.md) | Eindcontrole: geslaagd / mislukt / niet uitgevoerd / extern |
+| [docs/ARCHITECTUUR.md](docs/ARCHITECTUUR.md) | Ontwerp, beveiliging, workflows, financiële regels |
+| [docs/BRANDING.md](docs/BRANDING.md) | Huisstijl, kleuren en logovarianten |
 
-### Demo-modus
-Zonder Supabase-configuratie draait BouwFlow tijdens ontwikkeling in **demo-modus**: een **alleen-lezen** omgeving met fictieve voorbeeldgegevens. Elke pagina toont een oranje demo-balk. Er is geen demo-login en er wordt niets opgeslagen. In productie staat de demo-modus standaard uit (zie `BOUWFLOW_DEMO_MODE`).
+## Modules
 
----
+Dashboard · Klanten · Leveranciers · Projecten (met 11 tabbladen) · Planning · Voorcalculatie · Werkbonnen · Urenregistratie · Materiaalbibliotheek · Voorraad · Inkoop · Offertes · Facturatie (voorschot-, termijn-, eind- en creditfacturen) · Betalingen · Na-calculatie · Rapportages (incl. CSV) · Documenten · Medewerkers · Instellingen · Gebruikers en rechten · Abonnement · Audit trail · Platformbeheer · Klantportaal · PDF's voor offertes, facturen, werkbonnen, inkooporders en na-calculaties.
 
-## Lokaal installeren
+Er is **geen payrollmodule**: die bestond niet in het bestaande product en is bewust niet gebouwd (zie het readiness-rapport).
 
-Vereisten: Node.js 20.9 of hoger (getest met Node 22) en npm.
+## Snel starten
 
 ```bash
 npm install
-cp .env.example .env.local   # vul daarna de Supabase-gegevens in (of laat leeg voor demo-modus)
+cp .env.example .env.local   # leeg laten = alleen-lezen demo-modus
 npm run dev                  # http://localhost:3000
 ```
 
-### Beschikbare scripts
+## Scripts
 
 | Script | Doel |
 | --- | --- |
-| `npm run dev` | Ontwikkelserver |
-| `npm run build` / `npm start` | Productiebuild / productieserver |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | Route-types genereren + TypeScript-controle |
-| `npm test` | Unit-tests (financiële berekeningen, validatie, rechten, redirects) |
-| `npm run test:db` | Migraties + RLS-tests tegen een tijdelijke lokale PostgreSQL-database (vereist `psql`/`createdb` en een draaiende PostgreSQL 15+) |
-| `npm run check` | lint + typecheck + unit-tests |
-
----
-
-## Supabase koppelen (zelf in te vullen)
-
-> Ik heb **geen** credentials verzonnen. Onderstaande stappen moet u zelf uitvoeren.
-
-1. **Project aanmaken** op <https://supabase.com> (kies een regio dicht bij uw gebruikers).
-2. **Migraties uitvoeren** — kies één van beide:
-   - Supabase CLI: `npx supabase init` (maakt alleen `supabase/config.toml` aan), dan `npx supabase link --project-ref <uw-project-ref>` en `npx supabase db push`
-   - Of handmatig: voer in de SQL Editor de bestanden in `supabase/migrations/` **op volgorde** uit.
-3. **Omgevingsvariabelen** in `.env.local` (lokaal) en in Vercel (Project → Settings → Environment Variables):
-   - `NEXT_PUBLIC_SUPABASE_URL` — Project Settings → API
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — de *publishable* key (of de oudere *anon* key via `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-   - `NEXT_PUBLIC_SITE_URL` — bijv. `http://localhost:3000` of uw productiedomein
-4. **Authentication → URL Configuration**:
-   - *Site URL*: uw `NEXT_PUBLIC_SITE_URL`
-   - *Redirect URLs*: `http://localhost:3000/auth/callback`, `https://<uw-domein>/auth/callback` en dezelfde met `/auth/confirm`
-5. **E-mail** (aanbevolen voor productie): stel bij Authentication → SMTP een eigen SMTP-server in; de ingebouwde Supabase-mailer heeft strenge limieten. Optioneel kunt u de bevestigingsmail laten verwijzen naar
-   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&volgende=/onboarding`.
-6. **Beveiliging**: zet bij Authentication "Leaked password protection" aan en overweeg MFA voor beheerders.
-
-Daarna: registreren → e-mail bevestigen → organisatie aanmaken → u bent eigenaar en kunt klanten en projecten beheren.
-
-**Functies die pas werken na koppeling:** registreren, inloggen, onboarding, en het opslaan van klanten, projecten, instellingen en belastingtarieven. Zonder koppeling toont de app alleen de demo.
-
-### Deployment op Vercel
-1. Push de repository naar GitHub en importeer hem in Vercel.
-2. Vul de omgevingsvariabelen (stap 3) in voor *Production* en *Preview*.
-3. Voeg het Vercel-domein toe aan de Redirect URLs in Supabase.
-
----
-
-## Projectstructuur
-
-```
-src/
-  app/
-    (auth)/            login, registreren, auth-acties
-    (app)/             ingelogde omgeving (sidebar + topbar)
-      dashboard/
-      klanten/         lijst, nieuw, [id], [id]/bewerken, server actions
-      projecten/       lijst, nieuw, [id] (tabbladen), [id]/bewerken, server actions
-      instellingen/
-      [module]/        informatiepagina's voor toekomstige modules
-    auth/callback|confirm   verwerking van e-maillinks
-    onboarding/        organisatie aanmaken
-  components/ui/       herbruikbare UI-componenten (knoppen, velden, tabellen, badges, ...)
-  components/layout/   sidebar, topbar, mobiele navigatie
-  lib/
-    auth/              server-side context (gebruiker + actieve organisatie) en rechten
-    data/              data-toegang (Supabase of demo)
-    finance/           exacte financiële berekeningen + tests
-    validation/        Zod-schema's met Nederlandse foutmeldingen + tests
-    supabase/          Supabase-clients (server, proxy)
-  proxy.ts             sessie verversen + niet-ingelogde gebruikers naar /login
-supabase/
-  migrations/          database-schema, RLS-policies, functies en triggers
-  tests/               RLS- en bedrijfsregeltests (plain SQL)
-docs/ARCHITECTUUR.md   ontwerpkeuzes, beveiliging en vervolgstappen
-```
-
-Zie [`docs/ARCHITECTUUR.md`](docs/ARCHITECTUUR.md) voor de ontwerpkeuzes.
+| `npm run dev` / `build` / `start` | Ontwikkeling / productiebuild / productieserver |
+| `npm run lint` · `npm run typecheck` | ESLint · TypeScript |
+| `npm test` | Unit-tests (financiële berekeningen, validatie, rechten, PDF, rapportages) |
+| `npm run test:db` | Migraties + RLS- en workflowtests op een tijdelijke PostgreSQL-database |
+| `npm run test:contract` | Controleert of alle tabellen/kolommen/RPC's die de app gebruikt in het schema bestaan |
+| `npm run test:backup` | Back-up (pg_dump) en herstel (pg_restore) inclusief vergelijking |
+| `npm run test:all` | Alles hierboven + productiebuild |
+| `node tests/e2e/browser-check.cjs` | Browsercontrole desktop + mobiel + toegankelijkheid (axe) tegen een draaiende server |
+| `scripts/backup.sh` | Back-up van de productiedatabase |

@@ -1,71 +1,109 @@
 # BouwFlow — architectuur en ontwerpkeuzes
 
-## 1. Multi-tenancy en beveiliging
+## 1. Overzicht
 
-**Model:** één database, gedeeld schema. Iedere tenant-tabel heeft een `organization_id`. Isolatie wordt in de **database** afgedwongen met Row Level Security (RLS); de applicatie controleert daarnaast rechten aan de serverzijde.
+- **Frontend/server:** Next.js 16 App Router. Alle data-toegang en schrijfacties lopen via servercomponenten en server actions (`src/app/**/actions.ts`, `src/lib/save.ts`).
+- **Database:** Supabase PostgreSQL. Bedrijfsregels en financiële berekeningen die niet mogen misgaan, staan **in de database** (triggers, functies, constraints). De applicatie toont en valideert; de database bewaakt.
+- **Migraties:** `supabase/migrations/` (8 bestanden, allemaal niet-destructief).
 
-| Laag | Maatregel |
+| Migratie | Inhoud |
 | --- | --- |
-| Database | RLS op alle tabellen; helperfuncties `is_org_member()` en `has_org_role()` (SECURITY DEFINER, leeg `search_path`) |
-| Database | Tabelrechten van `anon` en `authenticated` ingetrokken en per tabel opnieuw toegekend; `anon` heeft geen toegang |
-| Database | Samengestelde foreign keys `(id, organization_id)`: een project kan alleen naar een klant/projectleider in **dezelfde** organisatie verwijzen, ook als iemand ID's manipuleert |
-| Database | Trigger `prevent_organization_change`: een record kan niet naar een andere organisatie worden verplaatst |
-| Database | Lidmaatschappen kunnen niet door clients worden aangemaakt of gewijzigd; organisaties worden alleen via de functie `create_organization()` aangemaakt (maker wordt eigenaar) |
-| Database | Nummers (klant, project, later offerte/factuur) worden server-side toegekend via `next_sequence_value()` met rij-lock; clients kunnen nummers niet kiezen of wijzigen |
-| Database | Geen DELETE-rechten op klanten en projecten: archiveren in plaats van verwijderen |
-| Database | Activiteitenlog wordt alleen via triggers gevuld; clients kunnen alleen lezen |
-| Opslag | Privé-bucket `documents`; pad `<organization_id>/...`; policies per organisatie en rol; ongeldige paden worden geweigerd |
-| Server | `getAppContext()` valideert sessie (`auth.getUser()`) en de actieve organisatie tegen de eigen lidmaatschappen; een gemanipuleerde cookie geeft geen toegang |
-| Server | Server actions controleren rechten (`guardWrite`) en zetten `organization_id` zelf — nooit uit formulierdata |
-| Server | Alle invoer wordt met Zod gevalideerd; zoektermen worden opgeschoond voordat ze in PostgREST-filters komen; sorteerkolommen via een whitelist |
-| Server | Redirects na login alleen naar interne paden (`safeRedirectPath`); meldingen in de URL alleen uit een vaste lijst |
-| HTTP | Security headers (X-Frame-Options, nosniff, HSTS, Referrer-Policy, Permissions-Policy) |
-| Geheimen | Alleen de publieke Supabase-URL en publishable/anon key in de browser. Er wordt geen service-role key gebruikt |
+| 0100 | Organisaties, leden, rollen, instellingen, belastingtarieven, nummering, activiteitenlog |
+| 0200 | Klanten, projecten |
+| 0300 | Privé-opslag `documents` + policies |
+| 0400 | Abonnementen, moduletoegang, platformbeheer, uitnodigingen, ledenbeheer, audit trail |
+| 0500 | Leveranciers, medewerkers, materiaalbibliotheek + prijshistorie, voorraad, **kostenregister** |
+| 0600 | Voorcalculatie, taken, uren, werkbonnen, inkoop + ontvangsten |
+| 0700 | Offertes, facturen (incl. termijn/credit), betalingen, saldi, projectfinanciën, klantportaal |
+| 0800 | Documentmetadata |
+
+## 2. Multi-tenancy en beveiliging
+
+- Iedere tabel heeft `organization_id` en **Row Level Security**.
+- **Samengestelde foreign keys** `(id, organization_id)`: een record kan alleen naar records binnen dezelfde organisatie verwijzen, ook als iemand een ID manipuleert.
+- `prevent_organization_change` voorkomt het verplaatsen van records naar een andere organisatie.
+- Schrijfrechten (`has_org_role`) vereisen een actieve rol **én** een geldig abonnement of een lopende proefperiode. Lezen blijft altijd mogelijk.
+- **Organisatie-ID's** komen altijd uit de server-context, nooit uit formulieren. De actieve organisatie-cookie wordt gecontroleerd tegen de eigen lidmaatschappen.
+- **Lidmaatschappen** kunnen alleen via functies worden gewijzigd:
+  - `create_organization`, `create_invitation` en `accept_invitation` (het e-mailadres moet overeenkomen);
+  - `update_member`, die de laatste eigenaar beschermt.
+- **Platformbeheerders** beheren abonnementen via aparte functies en zien **geen** bedrijfsgegevens van klanten.
+- **Klantportaal:**
+  - werkt met een geheime token van 256 bits; in de database staat alleen de SHA-256-hash;
+  - links zijn intrekbaar en 90 dagen geldig;
+  - toegang loopt uitsluitend via `portal_overview` en `portal_respond_quote`;
+  - de klant ziet alleen niet-concept offertes en definitieve facturen.
+- **Opslag:**
+  - privé-bucket met paden `<organization_id>/…`;
+  - downloads via signed URLs die 60 seconden geldig zijn;
+  - de server controleert bestandstype en grootte (25 MB) en maakt bestandsnamen veilig.
+- **Foutmeldingen** uit workflows gaan via een kortlevende, door de server gezette cookie, niet via de URL. Daardoor kan niemand een link met misleidende tekst maken.
+- **Geen service-role key:** de applicatie gebruikt alleen de publishable key; RLS bepaalt de rest.
 
 ### Rollen
 
-| Rol | Klanten schrijven | Projecten schrijven | Instellingen | Belastingtarieven |
-| --- | :-: | :-: | :-: | :-: |
-| owner (eigenaar) | ✓ | ✓ | ✓ | ✓ |
-| admin (beheerder) | ✓ | ✓ | ✓ | ✓ |
-| manager (projectleider) | ✓ | ✓ | – | – |
-| finance (financieel) | ✓ | – | – | ✓ |
-| employee (medewerker) | – | – | – | – |
-| viewer (alleen lezen) | – | – | – | – |
+| Recht | Eigenaar | Beheerder | Projectleider | Financieel | Medewerker | Alleen lezen |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: |
+| Klanten, leveranciers, materialen, inkoop | ✓ | ✓ | ✓ | ✓ | – | – |
+| Projecten, calculatie, planning, medewerkers | ✓ | ✓ | ✓ | – | – | – |
+| Uren/werkbonnen goedkeuren | ✓ | ✓ | ✓ | – | – | – |
+| Eigen uren/werkbonnen registreren | ✓ | ✓ | ✓ | – | ✓ | – |
+| Offertes | ✓ | ✓ | ✓ | ✓ | – | – |
+| Facturen en betalingen | ✓ | ✓ | – | ✓ | – | – |
+| Instellingen, gebruikers | ✓ | ✓ | – | – | – | – |
+| Audit trail lezen | ✓ | ✓ | – | ✓ | – | – |
 
-Alle leden kunnen de gegevens van hun eigen organisatie lezen. De rollen staan in de enum `org_role` (uit te breiden met `ALTER TYPE ... ADD VALUE`) en in `src/lib/auth/permissions.ts`; een unit-test bewaakt dat beide overeenkomen.
+## 3. Workflows
 
-## 2. Geld en berekeningen
+| Workflow | Stappen | Waar afgedwongen |
+| --- | --- | --- |
+| **A** Klant → project | Klant → project → taken (planning) → calculatie → offerte → acceptatie → project `gepland` + verkoopwaarde | `create_quote_from_estimate`, `respond_quote_internal` |
+| **B** Calculatie → factuur | Calculatie → offerte → acceptatie → voorschot-/termijnfactuur (percentage per belastinggroep) → eindfactuur (minus termijnen) → betaling → saldo | `create_invoice_from_quote`, `finalize_invoice`, `payment_guard`, view `invoice_balances` |
+| **C** Uitvoering | Taken → medewerker → uren/werkbon → goedkeuring → arbeidskosten (kostprijs als momentopname) + materiaalverbruik (voorraaduitgifte of directe kosten) | `approve_time_entry`, `approve_work_order` |
+| **D** Na-calculatie | Begroting (calculatie) vs. kostenregister per kostensoort, uren, omzet volgens gekozen basis, winst, marge, waarschuwingen | view `project_financials` + `src/lib/finance/postcalc.ts` |
+| **E** Inkoop en voorraad | Inkooporder → bestellen → (deel)ontvangst → voorraad (`receipt`) of direct projectkosten → uitgifte aan project → materiaalkosten | `receive_purchase_line`, `stock_movement_to_costs` |
+| **F** Financieel | Offerte → factuur → betaling → saldo → rapportage. Gefactureerd, ontvangen en verkoopwaarde blijven gescheiden | `invoice_balances`, `project_financials`, `src/lib/reports.ts` |
 
-- Bedragen in de database: `numeric(14,2)`; tarieven `numeric(6,3)`; valuta expliciet als ISO-code (`char(3)`) per project en per organisatie (standaard **SRD**).
-- In TypeScript: `decimal.js` (geen floats). Afronding expliciet op centen, *half up*. Regeltotalen worden eerst afgerond en daarna opgeteld, zodat totalen op een document controleerbaar zijn.
-- Belasting: per tarief gegroepeerd en per groep afgerond; zowel prijzen exclusief als inclusief belasting worden ondersteund. **Er worden geen tarieven aangenomen**: de organisatie stelt ze in bij Instellingen.
-- Na-calculatie (`src/lib/finance/postcalc.ts`):
-  - kostenverschil = werkelijke kosten − begrote kosten
-  - begrote winst = begrote omzet − begrote kosten
-  - gerealiseerde winst = gerealiseerde omzet − werkelijke kosten
-  - winstmarge = winst / omzet × 100% (alleen als omzet > 0)
-  - De **omzetbasis** (verkoopwaarde, gefactureerd of ontvangen) is per organisatie instelbaar; gefactureerde omzet, ontvangen betalingen en verkoopwaarde blijven altijd apart beschikbaar.
-- AI bepaalt nooit financiële totalen; alle bedragen komen uit deterministische, geteste functies.
+### Geen dubbele registratie
 
-## 3. Demo-modus
+- **Kostenregister** (`project_cost_entries`): elke werkelijke kost staat er precies één keer in, met een unieke bronverwijzing `(source_type, source_id)`. Het register is onwijzigbaar; correcties gaan via een tegenboeking.
+- **Werkbon → uren:** maximaal één urenregel per werkbon (`time_entries.work_order_id` is uniek).
+- **Uren:** dezelfde medewerker kan geen overlappende tijden registreren.
+- **Goedkeuringsfuncties zijn idempotent:** nogmaals goedkeuren boekt niets dubbel.
+- **Voorraad:**
+  - mutaties zijn onwijzigbaar en hebben een unieke bron;
+  - uitgifte boven de voorraad wordt geweigerd.
+- **Ontvangsten en betalingen** hebben een idempotentiesleutel, die bij het tonen van het formulier wordt gemaakt. Een dubbele klik of herhaald verzoek wordt daardoor één keer verwerkt.
+- **Overbetaling** en **meer crediteren dan gefactureerd** worden geweigerd.
 
-Zonder Supabase-configuratie leveren de data-functies (`src/lib/data/*`) vaste, fictieve voorbeeldgegevens (`src/lib/demo/data.ts`). Schrijfacties retourneren een melding en slaan niets op. Er is geen demo-authenticatie. In productie is de demo-modus standaard uit.
+## 4. Financiële regels
 
-## 4. Testen
+- **Bedragen:**
+  - database: `numeric(14,2)`, met prijzen tot 4 decimalen;
+  - applicatie: `decimal.js`, nooit JavaScript-floats;
+  - afronding: half away from zero, in database en applicatie gelijk.
+- **Calculatieregel:** kosten = round(hoeveelheid × (1 + verlies%) × kostprijs, 2). Dit is een *generated column* in de database.
+- **Documentregel:** round(aantal × prijs × (100 − korting) / 100, 2). Belasting wordt per tarief gegroepeerd en per groep afgerond; prijzen exclusief én inclusief belasting worden ondersteund. Totalen berekent de database; clients kunnen ze niet zetten.
+- **Definitieve documenten:**
+  - ze zijn vergrendeld, met een momentopname (`snapshot`) van bedrijf, klant, project en regels; ook het tarief per regel wordt als momentopname bewaard;
+  - PDF's van definitieve documenten worden uit die momentopname opgebouwd;
+  - wijzigingen gaan via een nieuwe offerteversie (`revise_quote`) of een creditnota.
+- **Nummering:** factuurnummers worden pas bij definitief maken toegekend (doorlopend per jaar, zonder gaten door concepten). Creditnota's hebben een eigen reeks (CR-).
+- **Na-calculatie:**
+  - kostenverschil = werkelijk − begroot;
+  - winst = omzet − kosten;
+  - marge = winst / omzet × 100%, alleen als de omzet groter is dan 0;
+  - de omzetbasis is per organisatie instelbaar (verkoopwaarde, gefactureerd excl. belasting, of ontvangen, naar verhouding omgerekend naar excl. belasting).
+- **Historische prijzen:** `material_price_history` bewaart elke prijswijziging. Calculatie- en documentregels bewaren hun eigen prijzen.
 
-- `npm test` — 29 unit-tests: geldrekenen, voorcalculatie, belasting, betalingen, na-calculatie, validatie, rechten, veilige redirects.
-- `npm run test:db` — voert alle migraties uit op een tijdelijke PostgreSQL-database met een minimale nabootsing van Supabase (`supabase/tests/00_supabase_stub.sql`) en controleert 40+ beveiligings- en bedrijfsregels (isolatie tussen organisaties, rollen, nummering, archiveren, opslag, anonieme toegang).
+## 5. Abonnementen en moduletoegang
 
-**Nog niet getest:** de volledige keten met een echte Supabase-instantie (Auth + PostgREST). Doe na het koppelen een rooktest: registreren, organisatie aanmaken, klant en project aanmaken, en met een tweede account controleren dat de gegevens niet zichtbaar zijn.
+- `subscription_plans` bepaalt welke modules (`modules`) en hoeveel gebruikers (`max_users`) een pakket heeft.
+- Dashboard, Klanten, Projecten en Instellingen zijn altijd beschikbaar.
+- Moduletoegang wordt server-side gecontroleerd (`ModuleGate`, `guardWrite`) en in de database bij het klantportaal.
+- De gebruikerslimiet wordt in de database afgedwongen bij het uitnodigen.
+- Er is nog geen betaalprovider; statussen beheert de platformbeheerder.
 
-## 5. Vervolgstappen (voorstel)
+## 6. Demo-modus
 
-1. **Medewerkers & uitnodigingen** — RPC's voor uitnodigen, rol wijzigen en deactiveren (met bescherming van de laatste eigenaar).
-2. **Materiaalbibliotheek + voorcalculatie** — tabellen `materials`, `project_estimate_lines` (kostensoort, categorie, eenheid, hoeveelheid, kost-/verkoopprijs, verlies%) gekoppeld aan de bestaande rekenkern.
-3. **Kostenregistratie (werkelijk)** — één centrale tabel `project_cost_entries` met `source_type` + `source_id` en een unieke index daarop. Werkbonnen, inkoop en handmatige boekingen schrijven hierheen, zodat dezelfde kosten **nooit dubbel** worden geteld.
-4. **Werkbonnen** (mobiel), daarna **inkoop**.
-5. **Offertes en facturen** — eigen nummerreeksen per jaar, statussen, en bij definitief maken een **momentopname** (klantgegevens, omschrijvingen, prijzen, belastingtarieven als JSON + vaste kolommen) die daarna onwijzigbaar is (trigger). PDF-generatie en e-mailverzending als afzonderlijke functies.
-6. **Betalingen** en **na-calculatie**-scherm met budgetwaarschuwingen.
-7. **Abonnementen** (bijv. Stripe of een lokale betaalprovider) per organisatie.
-8. Gegenereerde database-types (`npx supabase gen types typescript`) in plaats van handgeschreven types.
+Zonder Supabase-configuratie leveren de data-functies fictieve gegevens uit `src/lib/demo/`. Afgeleide bedragen (totalen, kosten, saldi, voorraad) worden met dezelfde rekenfuncties berekend. Schrijfacties tonen een melding en slaan niets op.
